@@ -3,9 +3,9 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
-	"github.com/Sfeir/handsongo/dao"
-	"github.com/Sfeir/handsongo/utils"
-	"github.com/Sfeir/handsongo/web"
+	"github.com/Sfeir/golang-200/dao"
+	"github.com/Sfeir/golang-200/utils"
+	"github.com/Sfeir/golang-200/web"
 	logger "github.com/Sirupsen/logrus"
 	cli "gopkg.in/urfave/cli.v1"
 	"os"
@@ -23,7 +23,7 @@ var (
 
 	port               = 8020
 	logLevel           = "warning"
-	db                 = "mongodb://mongo/spirits"
+	db                 = "mongodb://mongo/todos"
 	logFormat          = utils.TextFormatter
 	statisticsDuration = 20 * time.Second
 

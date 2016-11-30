@@ -2,22 +2,22 @@ package web
 
 import (
 	"encoding/json"
-	"github.com/Sfeir/handsongo/dao"
-	"github.com/Sfeir/handsongo/model"
+	"github.com/Sfeir/golang-200/dao"
+	"github.com/Sfeir/golang-200/model"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
 )
 
-func TestSpiritHandlerGet(t *testing.T) {
+func TestTaskHandlerGet(t *testing.T) {
 
 	// get mock dao
-	daoMock, _ := dao.GetSpiritDAO("", dao.DAOMock)
-	handler := NewSpiritHandler(daoMock)
+	daoMock, _ := dao.GetTaskDAO("", dao.DAOMock)
+	handler := NewTaskHandler(daoMock)
 
 	// build a request
-	req, err := http.NewRequest(http.MethodGet, "localhost/spirits", nil)
+	req, err := http.NewRequest(http.MethodGet, "localhost/tasks", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,8 +28,8 @@ func TestSpiritHandlerGet(t *testing.T) {
 	// execute the query
 	handler.GetAll(res, req)
 
-	var spiritOut []model.Spirit
-	json.NewDecoder(res.Body).Decode(&spiritOut)
+	var taskOut []model.Task
+	json.NewDecoder(res.Body).Decode(&taskOut)
 
 	if err != nil {
 		t.Errorf("Unable to get JSON content %v", err)
@@ -39,12 +39,12 @@ func TestSpiritHandlerGet(t *testing.T) {
 		t.Error("Wrong response code")
 	}
 
-	if dao.MockedSpirit != spiritOut[0] {
-		t.Errorf("Expected different from %v output %v", dao.MockedSpirit, spiritOut[0])
+	if dao.MockedTask != taskOut[0] {
+		t.Errorf("Expected different from %v output %v", dao.MockedTask, taskOut[0])
 	}
 }
 
-func TestSpiritHandlerGetServer(t *testing.T) {
+func TestTaskHandlerGetServer(t *testing.T) {
 
 	srv, err := BuildWebServer("", dao.DAOMock, 250*time.Millisecond)
 
@@ -55,14 +55,14 @@ func TestSpiritHandlerGetServer(t *testing.T) {
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
 
-	res, err := http.Get(ts.URL + "/spirits")
+	res, err := http.Get(ts.URL + "/tasks")
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	var resSpirit []model.Spirit
-	err = json.NewDecoder(res.Body).Decode(&resSpirit)
+	var resTask []model.Task
+	err = json.NewDecoder(res.Body).Decode(&resTask)
 
 	if err != nil {
 		t.Errorf("Unable to get JSON content %v", err)
@@ -74,22 +74,22 @@ func TestSpiritHandlerGetServer(t *testing.T) {
 		t.Error("Wrong response code")
 	}
 
-	if resSpirit[0] != dao.MockedSpirit {
+	if resTask[0] != dao.MockedTask {
 		t.Error("Wrong response body")
 	}
 }
 
-func BenchmarkSpiritHandlerGet(t *testing.B) {
+func BenchmarkTaskHandlerGet(t *testing.B) {
 
 	// tooling purpose
 	_ = new([45000]int)
 
 	// get mock dao
-	daoMock, _ := dao.GetSpiritDAO("", dao.DAOMock)
-	handler := NewSpiritHandler(daoMock)
+	daoMock, _ := dao.GetTaskDAO("", dao.DAOMock)
+	handler := NewTaskHandler(daoMock)
 
 	// build a request
-	req, err := http.NewRequest("GET", "localhost/spirits", nil)
+	req, err := http.NewRequest("GET", "localhost/tasks", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -100,14 +100,14 @@ func BenchmarkSpiritHandlerGet(t *testing.B) {
 	// execute the query
 	handler.GetAll(res, req)
 
-	var spiritOut []model.Spirit
-	err = json.NewDecoder(res.Body).Decode(&spiritOut)
+	var taskOut []model.Task
+	err = json.NewDecoder(res.Body).Decode(&taskOut)
 
 	if err != nil {
 		t.Errorf("Unable to get JSON content %v", err)
 	}
 
-	expected := model.Spirit{
+	expected := model.Task{
 		Name:         "Caroni",
 		Distiller:    "Caroni",
 		Bottler:      "Velier",
@@ -120,7 +120,7 @@ func BenchmarkSpiritHandlerGet(t *testing.B) {
 		Comment:      "heavy tire taste",
 	}
 
-	if expected != spiritOut[0] {
-		t.Errorf("Expected different from %v output %v", expected, spiritOut)
+	if expected != taskOut[0] {
+		t.Errorf("Expected different from %v output %v", expected, taskOut)
 	}
 }

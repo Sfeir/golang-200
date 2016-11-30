@@ -66,35 +66,35 @@ param() {
 
 # create
 create() {
-  vecho "Create spirit from file..."
-  curl -s -X POST -H "Content-Type:application/json" -d @caroni.json ${IP}:8020/spirits | jq
+  vecho "Create task from file..."
+  curl -s -X POST -H "Content-Type:application/json" -d @caroni.json ${IP}:8020/tasks | jq
 }
 
 # query
 query() {
-  vecho "Query all spirits..."
-  curl -s ${IP}:8020/spirits | jq
+  vecho "Query all tasks..."
+  curl -s ${IP}:8020/tasks | jq
 
-  vecho "Retrieve first spirit by ID..."
-  ID=$(curl -s ${IP}:8020/spirits | jq '.[0]' | jq -r '.id')
+  vecho "Retrieve first task by ID..."
+  ID=$(curl -s ${IP}:8020/tasks | jq '.[0]' | jq -r '.id')
 
-  vecho "Query one spirit by found ID ${ID}"
-  curl -s ${IP}:8020/spirits/${ID} | jq
+  vecho "Query one task by found ID ${ID}"
+  curl -s ${IP}:8020/tasks/${ID} | jq
 }
 
 # update
 update() {
-  vecho "Update spirit ${ID} from file..."
-  curl -s -X PUT -H "Content-Type:application/json" -d @clairin.json ${IP}:8020/spirits/${ID} | jq
+  vecho "Update task ${ID} from file..."
+  curl -s -X PUT -H "Content-Type:application/json" -d @clairin.json ${IP}:8020/tasks/${ID} | jq
 
-  vecho "Query one spirit by found ID ${ID} after update"
-  curl -s ${IP}:8020/spirits/${ID} | jq
+  vecho "Query one task by found ID ${ID} after update"
+  curl -s ${IP}:8020/tasks/${ID} | jq
 }
 
 # delete
 delete() {
-  vecho "Deleting spirit by ID ${ID}"
-  curl -X DELETE -H "Content-Type:application/json" ${IP}:8020/spirits/${ID}
+  vecho "Deleting task by ID ${ID}"
+  curl -X DELETE -H "Content-Type:application/json" ${IP}:8020/tasks/${ID}
 }
 
 ###########################

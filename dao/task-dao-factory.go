@@ -7,9 +7,9 @@ import (
 )
 
 const (
-	// DAOMongo is used for Mongo implementation of SpiritDAO
+	// DAOMongo is used for Mongo implementation of TaskDAO
 	DAOMongo int = iota
-	// DAOMock is used for mocked implementation of SpiritDAO
+	// DAOMock is used for mocked implementation of TaskDAO
 	DAOMock
 
 	// mongo timeout
@@ -23,8 +23,8 @@ var (
 	ErrorDAONotFound = errors.New("Unknown DAO type")
 )
 
-// GetSpiritDAO returns a SpiritDAO according to type and params
-func GetSpiritDAO(param string, daoType int) (SpiritDAO, error) {
+// GetTaskDAO returns a TaskDAO according to type and params
+func GetTaskDAO(param string, daoType int) (TaskDAO, error) {
 	switch daoType {
 	case DAOMongo:
 		// mongo connection
@@ -40,9 +40,9 @@ func GetSpiritDAO(param string, daoType int) (SpiritDAO, error) {
 		mgoSession.SetMode(mgo.Monotonic, true)
 		mgoSession.SetPoolLimit(poolSize)
 
-		return NewSpiritDAOMongo(mgoSession), nil
+		return NewTaskDAOMongo(mgoSession), nil
 	case DAOMock:
-		return NewSpiritDAOMock(), nil
+		return NewTaskDAOMock(), nil
 	default:
 		return nil, ErrorDAONotFound
 	}

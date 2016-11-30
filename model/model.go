@@ -20,8 +20,8 @@ const (
 	TypeGin = "gin"
 )
 
-// Spirit is the structure to define a spirit
-type Spirit struct {
+// Task is the structure to define a task to be done
+type Task struct {
 	ID           bson.ObjectId `json:"id" bson:"_id,omitempty" `
 	Name         string        `json:"name" bson:"name"`
 	Distiller    string        `json:"distiller" bson:"distiller"`
@@ -36,7 +36,7 @@ type Spirit struct {
 	Comment      string        `json:"comment" bson:"comment"`
 }
 
-// GetID returns the ID of an Spirit as a string
-func (s *Spirit) GetID() string {
+// GetID returns the ID of a Task as a string
+func (s *Task) GetID() string {
 	return s.ID.Hex()
 }

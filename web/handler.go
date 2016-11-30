@@ -1,8 +1,8 @@
 package web
 
 import (
-	"github.com/Sfeir/handsongo/dao"
-	"github.com/Sfeir/handsongo/model"
+	"github.com/Sfeir/golang-200/dao"
+	"github.com/Sfeir/golang-200/model"
 	logger "github.com/Sirupsen/logrus"
 	"gopkg.in/mgo.v2"
 	"net/http"
@@ -10,20 +10,20 @@ import (
 )
 
 const (
-	prefix = "/spirits"
+	prefix = "/tasks"
 )
 
-// SpiritHandler is a handler of spirits
-type SpiritHandler struct {
-	spiritDao dao.SpiritDAO
-	Routes    []Route
-	Prefix    string
+// TaskHandler is a handler for tasks resource
+type TaskHandler struct {
+	taskDao dao.TaskDAO
+	Routes  []Route
+	Prefix  string
 }
 
-// NewSpiritHandler creates a new spirit handler to manage spirits
-func NewSpiritHandler(spiritDAO dao.SpiritDAO) *SpiritHandler {
-	handler := SpiritHandler{
-		spiritDao: spiritDAO,
+// NewTaskHandler creates a new task handler to manage tasks
+func NewTaskHandler(taskDAO dao.TaskDAO) *TaskHandler {
+	handler := TaskHandler{
+		taskDao: taskDAO,
 		Prefix:    prefix,
 	}
 
@@ -31,35 +31,35 @@ func NewSpiritHandler(spiritDAO dao.SpiritDAO) *SpiritHandler {
 	routes := []Route{}
 	// GetAll
 	routes = append(routes, Route{
-		Name:        "Get all spirits",
+		Name:        "Get all tasks",
 		Method:      http.MethodGet,
 		Pattern:     "",
 		HandlerFunc: handler.GetAll,
 	})
 	// Get
 	routes = append(routes, Route{
-		Name:        "Get one spirit",
+		Name:        "Get one task",
 		Method:      http.MethodGet,
 		Pattern:     "/{id}",
 		HandlerFunc: handler.Get,
 	})
 	// Create
 	routes = append(routes, Route{
-		Name:        "Create a spirit",
+		Name:        "Create a task",
 		Method:      http.MethodPost,
 		Pattern:     "",
 		HandlerFunc: handler.Create,
 	})
 	// Update
 	routes = append(routes, Route{
-		Name:        "Update a spirit",
+		Name:        "Update a task",
 		Method:      http.MethodPut,
 		Pattern:     "/{id}",
 		HandlerFunc: handler.Update,
 	})
 	// Delete
 	routes = append(routes, Route{
-		Name:        "Delete a spirit",
+		Name:        "Delete a task",
 		Method:      http.MethodDelete,
 		Pattern:     "/{id}",
 		HandlerFunc: handler.Delete,
@@ -71,7 +71,7 @@ func NewSpiritHandler(spiritDAO dao.SpiritDAO) *SpiritHandler {
 }
 
 // GetAll retrieve all entities with optional paging of items (start / end are item counts 50 to 100 for example)
-func (sh *SpiritHandler) GetAll(w http.ResponseWriter, r *http.Request) {
+func (sh *TaskHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 
 	startStr := ParamAsString("start", r)
 	endStr := ParamAsString("end", r)
@@ -90,107 +90,107 @@ func (sh *SpiritHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// find all spirits
-	spirits, err := sh.spiritDao.GetAllSpirits(start, end)
+	// find all tasks
+	tasks, err := sh.taskDao.GetAll(start, end)
 	if err != nil {
-		logger.WithField("error", err).Warn("unable to retrieve spirits")
-		SendJSONError(w, "Error while retrieving spirits", http.StatusInternalServerError)
+		logger.WithField("error", err).Warn("unable to retrieve tasks")
+		SendJSONError(w, "Error while retrieving tasks", http.StatusInternalServerError)
 		return
 	}
 
-	logger.WithField("spirits", spirits).Debug("spirits found")
-	SendJSONOk(w, spirits)
+	logger.WithField("tasks", tasks).Debug("tasks found")
+	SendJSONOk(w, tasks)
 }
 
 // Get retrieve an entity by id
-func (sh *SpiritHandler) Get(w http.ResponseWriter, r *http.Request) {
-	// get the spirit ID from the URL
-	spiritID := ParamAsString("id", r)
+func (sh *TaskHandler) Get(w http.ResponseWriter, r *http.Request) {
+	// get the task's ID from the URL
+	taskID := ParamAsString("id", r)
 
-	// find spirit
-	spirit, err := sh.spiritDao.GetSpiritByID(spiritID)
+	// find the task
+	task, err := sh.taskDao.GetByID(taskID)
 	if err != nil {
 		if err == mgo.ErrNotFound {
-			logger.WithField("error", err).WithField("spirit ID", spiritID).Warn("unable to retrieve spirit by ID")
+			logger.WithField("error", err).WithField("task ID", taskID).Warn("unable to retrieve task by ID")
 			SendJSONNotFound(w)
 			return
 		}
 
-		logger.WithField("error", err).WithField("spirit ID", spiritID).Warn("unable to retrieve spirit by ID")
-		SendJSONError(w, "Error while retrieving spirit by ID", http.StatusInternalServerError)
+		logger.WithField("error", err).WithField("task ID", taskID).Warn("unable to retrieve task by ID")
+		SendJSONError(w, "Error while retrieving task by ID", http.StatusInternalServerError)
 		return
 	}
 
-	logger.WithField("spirits", spirit).Debug("spirit found")
-	SendJSONOk(w, spirit)
+	logger.WithField("tasks", task).Debug("task found")
+	SendJSONOk(w, task)
 }
 
 // Create create an entity
-func (sh *SpiritHandler) Create(w http.ResponseWriter, r *http.Request) {
-	// spirit to be created
-	spirit := &model.Spirit{}
+func (sh *TaskHandler) Create(w http.ResponseWriter, r *http.Request) {
+	// task to be created
+	task := &model.Task{}
 	// get the content body
-	err := GetJSONContent(spirit, r)
+	err := GetJSONContent(task, r)
 
 	if err != nil {
-		logger.WithField("error", err).Warn("unable to decode spirit to create")
-		SendJSONError(w, "Error while decoding spirit to create", http.StatusBadRequest)
+		logger.WithField("error", err).Warn("unable to decode task to create")
+		SendJSONError(w, "Error while decoding task to create", http.StatusBadRequest)
 		return
 	}
 
-	// save spirit
-	err = sh.spiritDao.SaveSpirit(spirit)
+	// save task
+	err = sh.taskDao.Save(task)
 	if err != nil {
-		logger.WithField("error", err).WithField("spirit", *spirit).Warn("unable to create spirit")
-		SendJSONError(w, "Error while creating spirit", http.StatusInternalServerError)
+		logger.WithField("error", err).WithField("task", *task).Warn("unable to create task")
+		SendJSONError(w, "Error while creating task", http.StatusInternalServerError)
 		return
 	}
 
 	// send response
-	SendJSONOk(w, spirit)
+	SendJSONOk(w, task)
 }
 
 // Update update an entity by id
-func (sh *SpiritHandler) Update(w http.ResponseWriter, r *http.Request) {
-	// get the spirit ID from the URL
-	spiritID := ParamAsString("id", r)
+func (sh *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
+	// get the task ID from the URL
+	taskID := ParamAsString("id", r)
 
-	// spirit to be created
-	spirit := &model.Spirit{}
+	// task to be created
+	task := &model.Task{}
 	// get the content body
-	err := GetJSONContent(spirit, r)
+	err := GetJSONContent(task, r)
 
 	if err != nil {
-		logger.WithField("error", err).Warn("unable to decode spirit to create")
-		SendJSONError(w, "Error while decoding spirit to create", http.StatusBadRequest)
+		logger.WithField("error", err).Warn("unable to decode task to create")
+		SendJSONError(w, "Error while decoding task to create", http.StatusBadRequest)
 		return
 	}
 
-	// save spirit
-	_, err = sh.spiritDao.UpsertSpirit(spiritID, spirit)
+	// save task
+	_, err = sh.taskDao.Upsert(taskID, task)
 	if err != nil {
-		logger.WithField("error", err).WithField("spirit", *spirit).Warn("unable to create spirit")
-		SendJSONError(w, "Error while creating spirit", http.StatusInternalServerError)
+		logger.WithField("error", err).WithField("task", *task).Warn("unable to create task")
+		SendJSONError(w, "Error while creating task", http.StatusInternalServerError)
 		return
 	}
 
 	// send response
-	SendJSONOk(w, spirit)
+	SendJSONOk(w, task)
 }
 
 // Delete delete an entity by id
-func (sh *SpiritHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	// get the spirit ID from the URL
-	spiritID := ParamAsString("id", r)
+func (sh *TaskHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	// get the task ID from the URL
+	taskID := ParamAsString("id", r)
 
-	// find spirit
-	err := sh.spiritDao.DeleteSpirit(spiritID)
+	// find task
+	err := sh.taskDao.Delete(taskID)
 	if err != nil {
-		logger.WithField("error", err).WithField("spirit ID", spiritID).Warn("unable to delete spirit by ID")
-		SendJSONError(w, "Error while deleting spirit by ID", http.StatusInternalServerError)
+		logger.WithField("error", err).WithField("task ID", taskID).Warn("unable to delete task by ID")
+		SendJSONError(w, "Error while deleting task by ID", http.StatusInternalServerError)
 		return
 	}
 
-	logger.WithField("spiritID", spiritID).Debug("spirit deleted")
+	logger.WithField("taskID", taskID).Debug("task deleted")
 	SendJSONOk(w, nil)
 }

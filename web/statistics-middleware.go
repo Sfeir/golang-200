@@ -1,7 +1,7 @@
 package web
 
 import (
-	"github.com/Sfeir/handsongo/statistics"
+	"github.com/Sfeir/golang-200/statistics"
 	"net/http"
 	"time"
 )

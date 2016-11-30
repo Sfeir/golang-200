@@ -77,10 +77,10 @@ setupTest: teardownTest
 	@docker run -d --name handsongo-mongo-test -p "27017:27017" mongo:3.3
 
 test: setupTest
-	@export MONGODB_SRV=mongodb://$(DOCKER_IP)/spirits; go test -v $(PKGS); make teardownTest
+	@export MONGODB_SRV=mongodb://$(DOCKER_IP)/tasks; go test -v $(PKGS); make teardownTest
 
 bench:
-	@go test -v -run TestSpiritHandlerGet -bench=. -memprofile=prof.mem github.com/Sfeir/handsongo/web
+	@go test -v -run TestTaskHandlerGet -bench=. -memprofile=prof.mem github.com/Sfeir/golang-200/web
 
 benchTool: bench
 	@echo "### TIP : type 'top 5' and 'list the first item'"
@@ -95,7 +95,7 @@ lint:
 	@go vet $(PKGS)
 
 start:
-	@handsongo -port 8020 -logl debug -logf text -statd 15s -db mongodb://$(DOCKER_IP)/spirits
+	@handsongo -port 8020 -logl debug -logf text -statd 15s -db mongodb://$(DOCKER_IP)/tasks
 
 stop:
 	@killall handsongo

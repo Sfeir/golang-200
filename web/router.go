@@ -20,7 +20,7 @@ type Route struct {
 }
 
 // NewRouter creates a new router instance
-func NewRouter(handler *SpiritHandler) *Router {
+func NewRouter(handler *TaskHandler) *Router {
 	// new router
 	router := Router{mux.NewRouter()}
 

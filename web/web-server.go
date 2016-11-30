@@ -1,18 +1,18 @@
 package web
 
 import (
-	"github.com/Sfeir/handsongo/dao"
+	"github.com/Sfeir/golang-200/dao"
 	logger "github.com/Sirupsen/logrus"
 	"github.com/meatballhat/negroni-logrus"
 	"github.com/urfave/negroni"
 	"time"
 )
 
-// BuildWebServer constructs a new web server with the right DAO and spirits handler
+// BuildWebServer constructs a new web server with the right DAO and tasks handler
 func BuildWebServer(db string, daoType int, statisticsDuration time.Duration) (*negroni.Negroni, error) {
 
-	// spirit dao
-	dao, err := dao.GetSpiritDAO(db, daoType)
+	// task dao
+	dao, err := dao.GetTaskDAO(db, daoType)
 	if err != nil {
 		logger.WithField("error", err).WithField("connection string", db).Fatal("unable to connect to mongo db")
 		return nil, err
@@ -22,13 +22,13 @@ func BuildWebServer(db string, daoType int, statisticsDuration time.Duration) (*
 	n := negroni.New()
 
 	// new route handler
-	handler := NewSpiritHandler(dao)
+	handler := NewTaskHandler(dao)
 
 	// new router
 	router := NewRouter(handler)
 
 	// add middleware for logging
-	n.Use(negronilogrus.NewMiddlewareFromLogger(logger.StandardLogger(), "spirit"))
+	n.Use(negronilogrus.NewMiddlewareFromLogger(logger.StandardLogger(), "task"))
 
 	// add recovery middleware in case of panic in handler func
 	recovery := negroni.NewRecovery()
