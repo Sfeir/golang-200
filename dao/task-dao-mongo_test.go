@@ -17,16 +17,11 @@ func TestDAOMongo(t *testing.T) {
 	}
 
 	toSave := model.Task{
-		Name:         "Caroni 2000",
-		Distiller:    "Caroni",
-		Bottler:      "Velier",
-		Country:      "Trinidad",
-		Composition:  "Melasse",
-		SpiritType:   model.TypeRhum,
-		Age:          15,
-		BottlingDate: time.Date(2015, 01, 01, 0, 0, 0, 0, time.UTC),
-		Score:        8.5,
-		Comment:      "heavy tire taste",
+		Title:        "Use Go",
+		Description:  "Let's use the Go programming language in a real project.",
+		Status:       model.StatusTodo,
+		Priority:     model.PriorityMedium,
+		CreationDate: time.Date(2017, 02, 01, 0, 0, 0, 0, time.UTC),
 	}
 
 	err = daoMongo.Save(&toSave)

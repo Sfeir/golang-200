@@ -6,12 +6,12 @@ FROM golang:1.7-alpine
 RUN apk add -U make git
 
 # set the go path to import the source project
-WORKDIR $GOPATH/src/github.com/Sfeir/handsongo
-ADD . $GOPATH/src/github.com/Sfeir/handsongo
+WORKDIR $GOPATH/src/github.com/Sfeir/golang-200
+ADD . $GOPATH/src/github.com/Sfeir/golang-200
 
 # In one command-line (for reduce memory usage purposes),
 # we install the required software,
-# we build handsongo program
+# we build todolist program
 # we clean the system from all build dependencies
 RUN make all && apk del make git && \
   rm -rf /gopath/pkg && \

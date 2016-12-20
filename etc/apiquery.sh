@@ -2,7 +2,7 @@
 # File : apiquery.sh
 #
 # Goal :
-#       query handsongo API
+#       query todolist API
 #
 # History :
 # 16/10/20 Creation (SFR)

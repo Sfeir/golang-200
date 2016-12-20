@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/Sfeir/handsongo",
+	"ImportPath": "github.com/Sfeir/golang-200",
 	"GoVersion": "go1.7",
 	"GodepVersion": "v75",
 	"Packages": [

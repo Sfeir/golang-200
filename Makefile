@@ -1,4 +1,4 @@
-# Makefile for handsongo : Hands On Go
+# Makefile for Todolist : Go-200
 # -----------------------------------------------------------------
 #
 #        ENV VARIABLE
@@ -64,17 +64,17 @@ clean:
 	@rm -Rf build
 
 build: format
-	@go build -v $(VERSION_FLAG) -o $(GO)/bin/handsongo handsongo.go
+	@go build -v $(VERSION_FLAG) -o $(GO)/bin/todolist todolist.go
 
 format:
 	@go fmt $(PKGS)
 
 teardownTest:
-	@$(shell docker kill handsongo-mongo-test 2&>/dev/null 1&>/dev/null)
-	@$(shell docker rm handsongo-mongo-test 2&>/dev/null 1&>/dev/null)
+	@$(shell docker kill todolist-mongo-test 2&>/dev/null 1&>/dev/null)
+	@$(shell docker rm todolist-mongo-test 2&>/dev/null 1&>/dev/null)
 
 setupTest: teardownTest
-	@docker run -d --name handsongo-mongo-test -p "27017:27017" mongo:3.3
+	@docker run -d --name todolist-mongo-test -p "27017:27017" mongo:3.3
 
 test: setupTest
 	@export MONGODB_SRV=mongodb://$(DOCKER_IP)/tasks; go test -v $(PKGS); make teardownTest
@@ -95,20 +95,20 @@ lint:
 	@go vet $(PKGS)
 
 start:
-	@handsongo -port 8020 -logl debug -logf text -statd 15s -db mongodb://$(DOCKER_IP)/tasks
+	@todolist -port 8020 -logl debug -logf text -statd 15s -db mongodb://$(DOCKER_IP)/tasks
 
 stop:
-	@killall handsongo
+	@killall todolist
 
 # -----------------------------------------------------------------
 #        Docker targets
 # -----------------------------------------------------------------
 
 dockerBuild:
-	docker build -t sfeir/handsongo:latest .
+	docker build -t sfeir/todolist:latest .
 
 dockerClean:
-	docker rmi -f sfeir/handsongo:latest
+	docker rmi -f sfeir/todolist:latest
 
 dockerUp:
 	docker-compose up -d
@@ -121,7 +121,7 @@ dockerStop:
 dockerBuildUp: dockerStop dockerBuild dockerUp
 
 dockerWatch:
-	@watch -n1 'docker ps | grep handsongo'
+	@watch -n1 'docker ps | grep todolist'
 
 dockerLogs:
 	docker-compose logs -f

@@ -43,8 +43,8 @@ var (
 func main() {
 	// new app
 	app := cli.NewApp()
-	app.Name = "handsongo"
-	app.Usage = "handsongo service launcher"
+	app.Name = "todolist"
+	app.Usage = "todolist service launcher"
 
 	timeStmp, err := strconv.Atoi(BuildStmp)
 	if err != nil {

@@ -108,16 +108,11 @@ func BenchmarkTaskHandlerGet(t *testing.B) {
 	}
 
 	expected := model.Task{
-		Name:         "Caroni",
-		Distiller:    "Caroni",
-		Bottler:      "Velier",
-		Country:      "Trinidad",
-		Composition:  "Molasse",
-		SpiritType:   model.TypeRhum,
-		Age:          15,
-		BottlingDate: time.Date(2015, 01, 01, 0, 0, 0, 0, time.UTC),
-		Score:        8.5,
-		Comment:      "heavy tire taste",
+		Title:        "Learn Go",
+		Description:  "Let's learn the Go programming language and how to use it in a real project to make great programs.",
+		Status:       model.StatusInProgress,
+		Priority:     model.PriorityHigh,
+		CreationDate: time.Date(2017, 01, 01, 0, 0, 0, 0, time.UTC),
 	}
 
 	if expected != taskOut[0] {

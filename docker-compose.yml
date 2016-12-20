@@ -1,17 +1,17 @@
-# handsongo micro-service
-handsongo:
- container_name: handsongo
- image: sfeir/handsongo:latest
+# todolist micro-service
+todolist:
+ container_name: todolist
+ image: sfeir/todolist:latest
  restart: always
  links:
    - mongo
  ports:
   - "8020:8020"
- command: /go/bin/handsongo -port 8020 -logl debug -logf text -statd 15s -db mongodb://mongo/tasks
+ command: /go/bin/todolist -port 8020 -logl debug -logf text -statd 15s -db mongodb://mongo/tasks
 
 # bdd mockup
 mongo:
- container_name: handsongo-mongo
+ container_name: todolist-mongo
  image: mongo:3.3
  restart: always
  ports:
