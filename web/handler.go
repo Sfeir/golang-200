@@ -24,7 +24,7 @@ type TaskHandler struct {
 func NewTaskHandler(taskDAO dao.TaskDAO) *TaskHandler {
 	handler := TaskHandler{
 		taskDao: taskDAO,
-		Prefix:    prefix,
+		Prefix:  prefix,
 	}
 
 	// build routes
