@@ -1,4 +1,7 @@
 # Changelog
 ## v0.0.1 [Unreleased]
-- 16/11/29 chore(all): initial commit (SFR)
+- 17/02/21 chore(vendor): update vendors to glide (SFR)
+           refact(model): add const types
+           chore(etc): update scripts and types to todos
+- 16/12/20 chore(all): refactor from handsongo to todolost (OFU)
 

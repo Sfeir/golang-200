@@ -22,6 +22,7 @@ func TestDAOMongo(t *testing.T) {
 		Status:       model.StatusTodo,
 		Priority:     model.PriorityMedium,
 		CreationDate: time.Date(2017, 02, 01, 0, 0, 0, 0, time.UTC),
+		DueDate:      time.Date(2017, 02, 02, 0, 0, 0, 0, time.UTC),
 	}
 
 	err = daoMongo.Save(&toSave)
@@ -45,8 +46,8 @@ func TestDAOMongo(t *testing.T) {
 
 	t.Log("initial task found one", oneTask)
 
-	oneTask.Age = 18
-	oneTask.Comment = "soft tarmac smell"
+	oneTask.Title = "Use Go(lang)"
+	oneTask.Description = "Let's build a REST service in Go !"
 	chg, err := daoMongo.Upsert(oneTask.ID.Hex(), oneTask)
 	if err != nil {
 		t.Error(err)

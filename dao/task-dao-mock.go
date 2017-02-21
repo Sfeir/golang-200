@@ -12,6 +12,7 @@ var MockedTask = model.Task{
 	Status:       model.StatusInProgress,
 	Priority:     model.PriorityHigh,
 	CreationDate: time.Date(2017, 01, 01, 0, 0, 0, 0, time.UTC),
+	DueDate:      time.Date(2017, 01, 02, 0, 0, 0, 0, time.UTC),
 }
 
 // TaskDAOMock is the mocked implementation of the TaskDAO

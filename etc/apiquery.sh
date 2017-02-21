@@ -67,7 +67,7 @@ param() {
 # create
 create() {
   vecho "Create task from file..."
-  curl -s -X POST -H "Content-Type:application/json" -d @caroni.json ${IP}:8020/tasks | jq
+  curl -s -X POST -H "Content-Type:application/json" -d @todomedium.json ${IP}:8020/tasks | jq
 }
 
 # query
@@ -85,7 +85,7 @@ query() {
 # update
 update() {
   vecho "Update task ${ID} from file..."
-  curl -s -X PUT -H "Content-Type:application/json" -d @clairin.json ${IP}:8020/tasks/${ID} | jq
+  curl -s -X PUT -H "Content-Type:application/json" -d @todohigh.json ${IP}:8020/tasks/${ID} | jq
 
   vecho "Query one task by found ID ${ID} after update"
   curl -s ${IP}:8020/tasks/${ID} | jq
@@ -97,7 +97,7 @@ delete() {
   curl -X DELETE -H "Content-Type:application/json" ${IP}:8020/tasks/${ID}
 }
 
-###########################
+############################
 # main processing          #
 ############################
 

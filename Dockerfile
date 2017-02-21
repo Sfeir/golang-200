@@ -1,5 +1,5 @@
 # minimal linux distribution
-FROM golang:1.7-alpine
+FROM golang:1.8-alpine
 
 # GO and PATH env variables already set in golang image
 # to reduce download time
