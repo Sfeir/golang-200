@@ -1,6 +1,7 @@
 package web
 
 import (
+	"bytes"
 	"encoding/json"
 	"github.com/Sfeir/golang-200/dao"
 	"github.com/Sfeir/golang-200/model"
@@ -10,44 +11,107 @@ import (
 	"time"
 )
 
+// This test is composed by several subtests and uses httptest.ResponseRecorder type to record http response.
+// These are NOT end-to-end tests as we are directly calling the handler methods we want to test.
 func TestTaskHandlerGet(t *testing.T) {
 
 	// get mock dao
 	daoMock, _ := dao.GetTaskDAO("", dao.DAOMock)
 	handler := NewTaskHandler(daoMock)
 
-	// build a request
-	req, err := http.NewRequest(http.MethodGet, "localhost/tasks", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	t.Run("Get all tasks", func(t *testing.T) {
+		// build a request
+		req := httptest.NewRequest(http.MethodGet, "/tasks", nil)
 
-	// build the recorder
-	res := httptest.NewRecorder()
+		// build the recorder
+		res := httptest.NewRecorder()
 
-	// execute the query
-	handler.GetAll(res, req)
+		// execute the query
+		handler.GetAll(res, req)
 
-	var taskOut []model.Task
-	json.NewDecoder(res.Body).Decode(&taskOut)
+		var taskOut []model.Task
+		if err := json.NewDecoder(res.Body).Decode(&taskOut); err != nil {
+			t.Errorf("Unable to get JSON content %v", err)
+		}
 
-	if err != nil {
-		t.Errorf("Unable to get JSON content %v", err)
-	}
+		if res.Code != http.StatusOK {
+			t.Errorf("Wrong response code. Got %d instead of %d.", res.Code, http.StatusCreated)
+		}
 
-	if res.Code != http.StatusOK {
-		t.Error("Wrong response code")
-	}
+		if dao.MockedTask != taskOut[0] {
+			t.Errorf("Expected different from %v output %v", dao.MockedTask, taskOut[0])
+		}
+	})
 
-	if dao.MockedTask != taskOut[0] {
-		t.Errorf("Expected different from %v output %v", dao.MockedTask, taskOut[0])
-	}
+	t.Run("Get one task", func(t *testing.T) {
+		// build a request
+		req := httptest.NewRequest(http.MethodGet, "/tasks/"+dao.MockedTask.ID.Hex(), nil)
+
+		// build the recorder
+		res := httptest.NewRecorder()
+
+		// execute the query
+		//handler.Get(res, req) ==> the path parameter {id} will not be extracted if you call the handler method directly
+		// That's why we use a router instead.
+		router := NewRouter(handler)
+		router.ServeHTTP(res, req)
+
+		var taskOut model.Task
+		if err := json.NewDecoder(res.Body).Decode(&taskOut); err != nil {
+			t.Errorf("Unable to get JSON content %v", err)
+		}
+
+		if res.Code != http.StatusOK {
+			t.Errorf("Wrong response code. Got %d instead of %d.", res.Code, http.StatusCreated)
+		}
+
+		if dao.MockedTask != taskOut {
+			t.Errorf("Expected different from %v output %v", dao.MockedTask, taskOut)
+		}
+	})
+
+	t.Run("Create a task", func(t *testing.T) {
+		// build a request
+		task := model.Task{
+			Title:        "Some task",
+			Description:  "That's an example of task.",
+			Status:       model.StatusTodo,
+			Priority:     model.PriorityMinor,
+			CreationDate: time.Date(2017, 06, 01, 0, 0, 0, 0, time.UTC),
+			DueDate:      time.Date(2017, 07, 12, 0, 0, 0, 0, time.UTC),
+		}
+		body, _ := json.Marshal(task)
+
+		req := httptest.NewRequest(http.MethodPost, "/tasks", bytes.NewReader(body))
+
+		// build the recorder
+		res := httptest.NewRecorder()
+
+		// execute the query
+		handler.Create(res, req)
+
+		var taskOut model.Task
+		if err := json.NewDecoder(res.Body).Decode(&taskOut); err != nil {
+			t.Errorf("Unable to get JSON content %v", err)
+		}
+
+		if res.Code != http.StatusCreated {
+			t.Errorf("Wrong response code. Got %d instead of %d.", res.Code, http.StatusCreated)
+		}
+
+		task.ID = taskOut.ID
+		if task != taskOut {
+			t.Errorf("Expected different from %v output %v", task, taskOut)
+		}
+	})
+
 }
 
+// This test is composed by several subtests and uses httptest.Server type to setup a real local server for testing.
+// These ARE end-to-end tests as we are making http requests just as any client would do, without calling any method directly.
 func TestTaskHandlerGetServer(t *testing.T) {
 
 	srv, err := BuildWebServer("", dao.DAOMock, 250*time.Millisecond)
-
 	if err != nil {
 		t.Error(err)
 	}
@@ -55,28 +119,27 @@ func TestTaskHandlerGetServer(t *testing.T) {
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
 
-	res, err := http.Get(ts.URL + "/tasks")
+	t.Run("Get all tasks (end-to-end)", func(t *testing.T) {
 
-	if err != nil {
-		t.Error(err)
-	}
+		res, err := http.Get(ts.URL + "/tasks")
+		if err != nil {
+			t.Error(err)
+		}
 
-	var resTask []model.Task
-	err = json.NewDecoder(res.Body).Decode(&resTask)
+		var resTask []model.Task
+		if err := json.NewDecoder(res.Body).Decode(&resTask); err != nil {
+			t.Errorf("Unable to get JSON content %v", err)
+		}
+		res.Body.Close()
 
-	if err != nil {
-		t.Errorf("Unable to get JSON content %v", err)
-	}
+		if res.StatusCode != http.StatusOK {
+			t.Errorf("Wrong response code. Got %d instead of %d.", res.StatusCode, http.StatusCreated)
+		}
 
-	res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
-		t.Error("Wrong response code")
-	}
-
-	if resTask[0] != dao.MockedTask {
-		t.Error("Wrong response body")
-	}
+		if resTask[0] != dao.MockedTask {
+			t.Error("Wrong response body")
+		}
+	})
 }
 
 func BenchmarkTaskHandlerGet(t *testing.B) {

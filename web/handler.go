@@ -147,7 +147,7 @@ func (sh *TaskHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// send response
-	SendJSONOk(w, task)
+	SendJSONWithHTTPCode(w, task, http.StatusCreated)
 }
 
 // Update update an entity by id
@@ -192,5 +192,5 @@ func (sh *TaskHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	logger.WithField("taskID", taskID).Debug("task deleted")
-	SendJSONOk(w, nil)
+	SendJSONWithHTTPCode(w, nil, http.StatusNoContent)
 }

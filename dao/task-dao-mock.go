@@ -1,12 +1,16 @@
 package dao
 
 import (
+	"errors"
 	"github.com/Sfeir/golang-200/model"
+	"github.com/Sfeir/handsongo/dao"
+	"gopkg.in/mgo.v2/bson"
 	"time"
 )
 
 // MockedTask is the task returned by this mocked interface
 var MockedTask = model.Task{
+	ID:           bson.NewObjectId(),
 	Title:        "Learn Go",
 	Description:  "Let's learn the Go programming language and how to use it in a real project to make great programs.",
 	Status:       model.StatusInProgress,
@@ -17,49 +21,107 @@ var MockedTask = model.Task{
 
 // TaskDAOMock is the mocked implementation of the TaskDAO
 type TaskDAOMock struct {
+	storage map[string]*model.Task
 }
 
 // NewTaskDAOMock creates a new TaskDAO with a mocked implementation
 func NewTaskDAOMock() TaskDAO {
-	return &TaskDAOMock{}
+	daoMock := &TaskDAOMock{
+		storage: make(map[string]*model.Task),
+	}
+
+	// Adds some fake data
+	daoMock.Save(&MockedTask)
+
+	return daoMock
 }
 
 // GetByID returns a task by its ID
 func (s *TaskDAOMock) GetByID(ID string) (*model.Task, error) {
-	return &MockedTask, nil
+	task, ok := s.storage[ID]
+	if !ok {
+		return nil, errors.New("Task not found with ID " + ID)
+	}
+	return task, nil
 }
 
 // GetAll returns all tasks with paging capability
 func (s *TaskDAOMock) GetAll(start, end int) ([]model.Task, error) {
-	return []model.Task{MockedTask}, nil
+	if start == dao.NoPaging {
+		start = 0
+	}
+	if end == dao.NoPaging {
+		end = len(s.storage)
+	}
+	if start > end || end > len(s.storage) {
+		return []model.Task{}, nil
+	}
+
+	tasks := s.getBy(func(task *model.Task) bool {
+		return true
+	})
+
+	return tasks[start:end], nil
 }
 
-// GetByName returns all tasks by name
-func (s *TaskDAOMock) GetByName(name string) ([]model.Task, error) {
-	return []model.Task{MockedTask}, nil
+// GetByTitle returns all tasks by title
+func (s *TaskDAOMock) GetByTitle(title string) ([]model.Task, error) {
+	tasks := s.getBy(func(task *model.Task) bool {
+		return task.Title == title
+	})
+	return tasks, nil
 }
 
-// GetByType returns all tasks by type
-func (s *TaskDAOMock) GetByType(taskType string) ([]model.Task, error) {
-	return []model.Task{MockedTask}, nil
+// GetByStatus returns all tasks by status
+func (s *TaskDAOMock) GetByStatus(status model.TaskStatus) ([]model.Task, error) {
+	tasks := s.getBy(func(task *model.Task) bool {
+		return task.Status == status
+	})
+	return tasks, nil
 }
 
-// GetByTypeAndScore returns all tasks by type and score greater than parameter
-func (s *TaskDAOMock) GetByTypeAndScore(taskType string, score uint8) ([]model.Task, error) {
-	return []model.Task{MockedTask}, nil
+// GetByStatusAndPriority returns all tasks by status and priority
+func (s *TaskDAOMock) GetByStatusAndPriority(status model.TaskStatus, priority model.TaskPriority) ([]model.Task, error) {
+	tasks := s.getBy(func(task *model.Task) bool {
+		return task.Status == status && task.Priority == priority
+	})
+	return tasks, nil
+}
+
+// getBy returns all tasks that meet filtering conditions
+func (s *TaskDAOMock) getBy(filter func(task *model.Task) bool) []model.Task {
+	tasks := make([]model.Task, 0)
+	for _, task := range s.storage {
+		if filter(task) {
+			tasks = append(tasks, *task)
+		}
+	}
+	return tasks
 }
 
 // Save saves the task
 func (s *TaskDAOMock) Save(task *model.Task) error {
+	if len(task.ID) == 0 {
+		task.ID = bson.NewObjectId()
+	}
+	s.storage[task.ID.Hex()] = task
 	return nil
 }
 
 // Upsert updates or creates a task
 func (s *TaskDAOMock) Upsert(ID string, task *model.Task) (bool, error) {
+	// check ID
+	if !bson.IsObjectIdHex(ID) {
+		return false, errors.New("Invalid input to ObjectIdHex")
+	}
+
+	task.ID = bson.ObjectIdHex(ID)
+	s.Save(task)
 	return true, nil
 }
 
 // Delete deletes a tasks by its ID
 func (s *TaskDAOMock) Delete(ID string) error {
+	delete(s.storage, ID)
 	return nil
 }

@@ -80,19 +80,19 @@ func (s *TaskDAOMongo) GetAll(start, end int) ([]model.Task, error) {
 	return s.getAllTasksByQuery(nil, start, end)
 }
 
-// GetByName returns all tasks by name
-func (s *TaskDAOMongo) GetByName(name string) ([]model.Task, error) {
-	return s.getAllTasksByQuery(bson.M{"name": name}, NoPaging, NoPaging)
+// GetByTitle returns all tasks by title
+func (s *TaskDAOMongo) GetByTitle(title string) ([]model.Task, error) {
+	return s.getAllTasksByQuery(bson.M{"title": title}, NoPaging, NoPaging)
 }
 
-// GetByType returns all tasks by type
-func (s *TaskDAOMongo) GetByType(taskType string) ([]model.Task, error) {
-	return s.getAllTasksByQuery(bson.M{"type": taskType}, NoPaging, NoPaging)
+// GetByStatus returns all tasks by status
+func (s *TaskDAOMongo) GetByStatus(status model.TaskStatus) ([]model.Task, error) {
+	return s.getAllTasksByQuery(bson.M{"status": status}, NoPaging, NoPaging)
 }
 
-// GetByTypeAndScore returns all tasks by type and score greater than parameter
-func (s *TaskDAOMongo) GetByTypeAndScore(taskType string, score uint8) ([]model.Task, error) {
-	return s.getAllTasksByQuery(bson.M{"type": taskType, "score": bson.M{"$gte": score}}, NoPaging, NoPaging)
+// GetByStatusAndPriority returns all tasks by status and priority
+func (s *TaskDAOMongo) GetByStatusAndPriority(status model.TaskStatus, priority model.TaskPriority) ([]model.Task, error) {
+	return s.getAllTasksByQuery(bson.M{"status": status, "priority": priority}, NoPaging, NoPaging)
 }
 
 // Save saves the task

@@ -18,14 +18,14 @@ type TaskDAO interface {
 	// GetAll returns all tasks with paging capability
 	GetAll(start, end int) ([]model.Task, error)
 
-	// GetByName returns all tasks by name
-	GetByName(name string) ([]model.Task, error)
+	// GetByTitle returns all tasks by title
+	GetByTitle(title string) ([]model.Task, error)
 
-	// GetByType returns all tasks by type
-	GetByType(taskType string) ([]model.Task, error)
+	// GetByStatus returns all tasks by status
+	GetByStatus(status model.TaskStatus) ([]model.Task, error)
 
-	// GetByTypeAndScore returns all tasks by type and score greater than parameter
-	GetByTypeAndScore(taskType string, score uint8) ([]model.Task, error)
+	// GetByStatusAndPriority returns all tasks by status and priority
+	GetByStatusAndPriority(status model.TaskStatus, priority model.TaskPriority) ([]model.Task, error)
 
 	// Save saves the task
 	Save(task *model.Task) error
