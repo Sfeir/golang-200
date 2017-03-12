@@ -45,7 +45,7 @@ func TestTaskHandlerGet(t *testing.T) {
 
 	t.Run("Get one task", func(t *testing.T) {
 		// build a request
-		req := httptest.NewRequest(http.MethodGet, "/tasks/"+dao.MockedTask.ID.Hex(), nil)
+		req := httptest.NewRequest(http.MethodGet, "/tasks/"+dao.MockedTask.ID, nil)
 
 		// build the recorder
 		res := httptest.NewRecorder()

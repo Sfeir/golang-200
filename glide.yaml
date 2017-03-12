@@ -1,11 +1,13 @@
 package: github.com/Sfeir/golang-200
 import:
 - package: github.com/Sirupsen/logrus
-  version: v0.11.2
+  version: v0.11.4
 - package: github.com/bshuster-repo/logrus-logstash-hook
 - package: github.com/gorilla/mux
   version: v1.3.0
 - package: github.com/meatballhat/negroni-logrus
+- package: github.com/satori/go.uuid
+  version: v1.1.0
 - package: github.com/urfave/negroni
   version: v0.2.0
 - package: gopkg.in/mgo.v2

@@ -1,7 +1,7 @@
 package model
 
 import (
-	"gopkg.in/mgo.v2/bson"
+	"github.com/satori/go.uuid"
 	"time"
 )
 
@@ -31,16 +31,16 @@ const (
 
 // Task is the structure to define a task to be done
 type Task struct {
-	ID           bson.ObjectId `json:"id" bson:"_id,omitempty" `
-	Title        string        `json:"title" bson:"title"`
-	Description  string        `json:"description" bson:"description"`
-	Status       TaskStatus    `json:"status" bson:"status"`
-	Priority     TaskPriority  `json:"priority" bson:"priority"`
-	CreationDate time.Time     `json:"creationDate" bson:"creationDate"`
-	DueDate      time.Time     `json:"dueDate" bson:"dueDate"`
+	ID           string       `json:"id" bson:"id"`
+	Title        string       `json:"title" bson:"title"`
+	Description  string       `json:"description" bson:"description"`
+	Status       TaskStatus   `json:"status" bson:"status"`
+	Priority     TaskPriority `json:"priority" bson:"priority"`
+	CreationDate time.Time    `json:"creationDate" bson:"creationDate"`
+	DueDate      time.Time    `json:"dueDate" bson:"dueDate"`
 }
 
-// GetID returns the ID of a Task as a string
-func (s *Task) GetID() string {
-	return s.ID.Hex()
+// NewID returns the ID of a Task as a string
+func (s *Task) NewID() {
+	s.ID = uuid.NewV4().String()
 }

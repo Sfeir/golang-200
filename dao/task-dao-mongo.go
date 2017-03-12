@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/Sfeir/golang-200/model"
 	logger "github.com/Sirupsen/logrus"
+	"github.com/satori/go.uuid"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -40,9 +41,10 @@ func NewTaskDAOMongo(session *mgo.Session) TaskDAO {
 
 // GetByID returns a task by its ID
 func (s *TaskDAOMongo) GetByID(ID string) (*model.Task, error) {
+
 	// check ID
-	if !bson.IsObjectIdHex(ID) {
-		return nil, errors.New("Invalid input to ObjectIdHex")
+	if _, err := uuid.FromString(ID); err != nil {
+		return nil, errors.New("Invalid input to UUID")
 	}
 
 	session := s.session.Copy()
@@ -50,7 +52,7 @@ func (s *TaskDAOMongo) GetByID(ID string) (*model.Task, error) {
 
 	task := model.Task{}
 	c := session.DB("").C(collection)
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(ID)}).One(&task)
+	err := c.Find(bson.M{"id": ID}).One(&task)
 	return &task, err
 }
 
@@ -97,6 +99,12 @@ func (s *TaskDAOMongo) GetByStatusAndPriority(status model.TaskStatus, priority 
 
 // Save saves the task
 func (s *TaskDAOMongo) Save(task *model.Task) error {
+
+	// check task has an ID, if not create one
+	if len(task.ID) == 0 {
+		task.ID = uuid.NewV4().String()
+	}
+
 	session := s.session.Copy()
 	defer session.Close()
 	c := session.DB("").C(collection)
@@ -104,17 +112,18 @@ func (s *TaskDAOMongo) Save(task *model.Task) error {
 }
 
 // Upsert updates or creates a task
-func (s *TaskDAOMongo) Upsert(ID string, task *model.Task) (bool, error) {
+func (s *TaskDAOMongo) Upsert(task *model.Task) (bool, error) {
 
 	// check ID
-	if !bson.IsObjectIdHex(ID) {
-		return false, errors.New("Invalid input to ObjectIdHex")
+	// check task has an ID, if not create one
+	if len(task.ID) == 0 {
+		task.ID = uuid.NewV4().String()
 	}
 
 	session := s.session.Copy()
 	defer session.Close()
 	c := session.DB("").C(collection)
-	chg, err := c.Upsert(bson.M{"_id": bson.ObjectIdHex(ID)}, task)
+	chg, err := c.Upsert(bson.M{"id": task.ID}, task)
 	if err != nil {
 		return false, err
 	}
@@ -125,13 +134,13 @@ func (s *TaskDAOMongo) Upsert(ID string, task *model.Task) (bool, error) {
 func (s *TaskDAOMongo) Delete(ID string) error {
 
 	// check ID
-	if !bson.IsObjectIdHex(ID) {
-		return errors.New("Invalid input to ObjectIdHex")
+	if _, err := uuid.FromString(ID); err != nil {
+		return errors.New("Invalid input to UUID")
 	}
 
 	session := s.session.Copy()
 	defer session.Close()
 	c := session.DB("").C(collection)
-	err := c.Remove(bson.M{"_id": bson.ObjectIdHex(ID)})
+	err := c.Remove(bson.M{"id": ID})
 	return err
 }

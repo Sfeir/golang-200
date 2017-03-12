@@ -3,14 +3,13 @@ package dao
 import (
 	"errors"
 	"github.com/Sfeir/golang-200/model"
-	"github.com/Sfeir/handsongo/dao"
-	"gopkg.in/mgo.v2/bson"
+	"github.com/satori/go.uuid"
 	"time"
 )
 
 // MockedTask is the task returned by this mocked interface
 var MockedTask = model.Task{
-	ID:           bson.NewObjectId(),
+	ID:           uuid.NewV4().String(),
 	Title:        "Learn Go",
 	Description:  "Let's learn the Go programming language and how to use it in a real project to make great programs.",
 	Status:       model.StatusInProgress,
@@ -47,10 +46,10 @@ func (s *TaskDAOMock) GetByID(ID string) (*model.Task, error) {
 
 // GetAll returns all tasks with paging capability
 func (s *TaskDAOMock) GetAll(start, end int) ([]model.Task, error) {
-	if start == dao.NoPaging {
+	if start == NoPaging {
 		start = 0
 	}
-	if end == dao.NoPaging {
+	if end == NoPaging {
 		end = len(s.storage)
 	}
 	if start > end || end > len(s.storage) {
@@ -90,7 +89,7 @@ func (s *TaskDAOMock) GetByStatusAndPriority(status model.TaskStatus, priority m
 
 // getBy returns all tasks that meet filtering conditions
 func (s *TaskDAOMock) getBy(filter func(task *model.Task) bool) []model.Task {
-	tasks := make([]model.Task, 0)
+	var tasks []model.Task
 	for _, task := range s.storage {
 		if filter(task) {
 			tasks = append(tasks, *task)
@@ -102,20 +101,19 @@ func (s *TaskDAOMock) getBy(filter func(task *model.Task) bool) []model.Task {
 // Save saves the task
 func (s *TaskDAOMock) Save(task *model.Task) error {
 	if len(task.ID) == 0 {
-		task.ID = bson.NewObjectId()
+		task.ID = uuid.NewV4().String()
 	}
-	s.storage[task.ID.Hex()] = task
+	s.storage[task.ID] = task
 	return nil
 }
 
 // Upsert updates or creates a task
-func (s *TaskDAOMock) Upsert(ID string, task *model.Task) (bool, error) {
+func (s *TaskDAOMock) Upsert(task *model.Task) (bool, error) {
 	// check ID
-	if !bson.IsObjectIdHex(ID) {
-		return false, errors.New("Invalid input to ObjectIdHex")
+	if len(task.ID) == 0 {
+		task.ID = uuid.NewV4().String()
 	}
 
-	task.ID = bson.ObjectIdHex(ID)
 	s.Save(task)
 	return true, nil
 }

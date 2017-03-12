@@ -31,7 +31,7 @@ type TaskDAO interface {
 	Save(task *model.Task) error
 
 	// Upsert updates or creates a task
-	Upsert(ID string, task *model.Task) (bool, error)
+	Upsert(task *model.Task) (bool, error)
 
 	// Delete deletes a tasks by its ID
 	Delete(ID string) error
