@@ -1,4 +1,4 @@
-package dao
+package dao_test
 
 import (
 	"github.com/Sfeir/golang-200/model"
@@ -6,13 +6,14 @@ import (
 	"os"
 	"testing"
 	"time"
+	"github.com/Sfeir/golang-200/dao"
 )
 
 func TestDAOMongo(t *testing.T) {
 	// get config
 	config := os.Getenv("MONGODB_SRV")
 
-	daoMongo, err := GetTaskDAO(config, DAOMongo)
+	daoMongo, err := dao.GetTaskDAO(config, dao.DAOMongo)
 	if err != nil {
 		t.Error(err)
 	}
@@ -34,7 +35,7 @@ func TestDAOMongo(t *testing.T) {
 
 	t.Log("initial task saved", toSave)
 
-	tasks, err := daoMongo.GetAll(NoPaging, NoPaging)
+	tasks, err := daoMongo.GetAll(dao.NoPaging, dao.NoPaging)
 	if err != nil {
 		t.Error(err)
 	}

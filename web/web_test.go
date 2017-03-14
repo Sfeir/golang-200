@@ -35,7 +35,7 @@ func TestTaskHandlerGet(t *testing.T) {
 		}
 
 		if res.Code != http.StatusOK {
-			t.Errorf("Wrong response code. Got %d instead of %d.", res.Code, http.StatusCreated)
+			t.Errorf("Wrong response code. Got %d instead of %d.", res.Code, http.StatusOK)
 		}
 
 		if dao.MockedTask != taskOut[0] {
@@ -62,7 +62,7 @@ func TestTaskHandlerGet(t *testing.T) {
 		}
 
 		if res.Code != http.StatusOK {
-			t.Errorf("Wrong response code. Got %d instead of %d.", res.Code, http.StatusCreated)
+			t.Errorf("Wrong response code. Got %d instead of %d.", res.Code, http.StatusOK)
 		}
 
 		if dao.MockedTask != taskOut {
@@ -133,11 +133,65 @@ func TestTaskHandlerGetServer(t *testing.T) {
 		res.Body.Close()
 
 		if res.StatusCode != http.StatusOK {
-			t.Errorf("Wrong response code. Got %d instead of %d.", res.StatusCode, http.StatusCreated)
+			t.Errorf("Wrong response code. Got %d instead of %d.", res.StatusCode, http.StatusOK)
 		}
 
 		if resTask[0] != dao.MockedTask {
 			t.Error("Wrong response body")
+		}
+	})
+
+	t.Run("Get one task (end-to-end)", func(t *testing.T) {
+
+		res, err := http.Get(ts.URL + "/tasks/"+dao.MockedTask.ID)
+		if err != nil {
+			t.Error(err)
+		}
+
+		var resTask model.Task
+		if err := json.NewDecoder(res.Body).Decode(&resTask); err != nil {
+			t.Errorf("Unable to get JSON content %v", err)
+		}
+		res.Body.Close()
+
+		if res.StatusCode != http.StatusOK {
+			t.Errorf("Wrong response code. Got %d instead of %d.", res.StatusCode, http.StatusOK)
+		}
+
+		if resTask != dao.MockedTask {
+			t.Error("Wrong response body")
+		}
+	})
+
+	t.Run("Create a task (end-to-end)", func(t *testing.T) {
+		task := model.Task{
+			Title:        "Some task",
+			Description:  "That's an example of task.",
+			Status:       model.StatusTodo,
+			Priority:     model.PriorityMinor,
+			CreationDate: time.Date(2017, 06, 01, 0, 0, 0, 0, time.UTC),
+			DueDate:      time.Date(2017, 07, 12, 0, 0, 0, 0, time.UTC),
+		}
+		body, _ := json.Marshal(task)
+
+		res, err := http.Post(ts.URL + "/tasks", "application/json", bytes.NewReader(body))
+		if err != nil {
+			t.Error(err)
+		}
+
+		var taskOut model.Task
+		if err := json.NewDecoder(res.Body).Decode(&taskOut); err != nil {
+			t.Errorf("Unable to get JSON content %v", err)
+		}
+		res.Body.Close()
+
+		if res.StatusCode != http.StatusCreated {
+			t.Errorf("Wrong response code. Got %d instead of %d.", res.StatusCode, http.StatusCreated)
+		}
+
+		task.ID = taskOut.ID
+		if task != taskOut {
+			t.Errorf("Expected different from %v output %v", task, taskOut)
 		}
 	})
 }
