@@ -6,9 +6,12 @@ import (
 	"time"
 )
 
+// DBType lists the type of implementation the factory can return
+type DBType int
+
 const (
 	// DAOMongo is used for Mongo implementation of TaskDAO
-	DAOMongo int = iota
+	DAOMongo DBType = iota
 	// DAOMock is used for mocked implementation of TaskDAO
 	DAOMock
 
@@ -24,7 +27,7 @@ var (
 )
 
 // GetTaskDAO returns a TaskDAO according to type and params
-func GetTaskDAO(param string, daoType int) (TaskDAO, error) {
+func GetTaskDAO(param string, daoType DBType) (TaskDAO, error) {
 	switch daoType {
 	case DAOMongo:
 		// mongo connection

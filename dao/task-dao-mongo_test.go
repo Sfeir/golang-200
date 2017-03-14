@@ -1,12 +1,12 @@
 package dao_test
 
 import (
+	"github.com/Sfeir/golang-200/dao"
 	"github.com/Sfeir/golang-200/model"
 	"github.com/satori/go.uuid"
 	"os"
 	"testing"
 	"time"
-	"github.com/Sfeir/golang-200/dao"
 )
 
 func TestDAOMongo(t *testing.T) {

@@ -1,9 +1,9 @@
 package dao
 
 import (
-	"testing"
 	"github.com/Sfeir/golang-200/model"
 	"github.com/satori/go.uuid"
+	"testing"
 	"time"
 )
 
@@ -27,7 +27,7 @@ func TestDAOMockInternal(t *testing.T) {
 
 	tasks := daoMock.getBy(func(task *model.Task) bool {
 		return task.Status == model.StatusTodo
-	});
+	})
 
 	if len(tasks) != 1 {
 		t.Errorf("Expected 1 task, got %d", len(tasks))

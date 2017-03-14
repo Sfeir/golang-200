@@ -143,7 +143,7 @@ func TestTaskHandlerGetServer(t *testing.T) {
 
 	t.Run("Get one task (end-to-end)", func(t *testing.T) {
 
-		res, err := http.Get(ts.URL + "/tasks/"+dao.MockedTask.ID)
+		res, err := http.Get(ts.URL + "/tasks/" + dao.MockedTask.ID)
 		if err != nil {
 			t.Error(err)
 		}
@@ -174,7 +174,7 @@ func TestTaskHandlerGetServer(t *testing.T) {
 		}
 		body, _ := json.Marshal(task)
 
-		res, err := http.Post(ts.URL + "/tasks", "application/json", bytes.NewReader(body))
+		res, err := http.Post(ts.URL+"/tasks", "application/json", bytes.NewReader(body))
 		if err != nil {
 			t.Error(err)
 		}

@@ -31,7 +31,7 @@ func TestStatistics(t *testing.T) {
 		t.Errorf("Wrong statictics count %d is different from expected %d", statistics.counter, expectedCount)
 	}
 
-	time.Sleep(3 * statPeriod)
+	time.Sleep(2 * statPeriod)
 
 	if statistics.counter != emptyCount {
 		t.Errorf("Wrong statictics count %d is different from expected %d", statistics.counter, emptyCount)

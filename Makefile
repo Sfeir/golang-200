@@ -55,10 +55,8 @@ help:
 clean:
 	@go clean
 	@rm -Rf .tmp
-	@rm -Rf .DS_Store
 	@rm -Rf *.log
 	@rm -Rf *.out
-	@rm -Rf *.lock
 	@rm -Rf *.mem
 	@rm -Rf *.test
 	@rm -Rf build
