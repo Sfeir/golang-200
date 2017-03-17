@@ -13,16 +13,16 @@ const (
 	prefix = "/tasks"
 )
 
-// TaskHandler is a handler for tasks resource
-type TaskHandler struct {
+// TaskController is a controller for tasks resource
+type TaskController struct {
 	taskDao dao.TaskDAO
 	Routes  []Route
 	Prefix  string
 }
 
-// NewTaskHandler creates a new task handler to manage tasks
-func NewTaskHandler(taskDAO dao.TaskDAO) *TaskHandler {
-	handler := TaskHandler{
+// NewTaskController creates a new task controller to manage tasks
+func NewTaskController(taskDAO dao.TaskDAO) *TaskController {
+	controller := TaskController{
 		taskDao: taskDAO,
 		Prefix:  prefix,
 	}
@@ -34,44 +34,44 @@ func NewTaskHandler(taskDAO dao.TaskDAO) *TaskHandler {
 		Name:        "Get all tasks",
 		Method:      http.MethodGet,
 		Pattern:     "",
-		HandlerFunc: handler.GetAll,
+		HandlerFunc: controller.GetAll,
 	})
 	// Get
 	routes = append(routes, Route{
 		Name:        "Get one task",
 		Method:      http.MethodGet,
 		Pattern:     "/{id}",
-		HandlerFunc: handler.Get,
+		HandlerFunc: controller.Get,
 	})
 	// Create
 	routes = append(routes, Route{
 		Name:        "Create a task",
 		Method:      http.MethodPost,
 		Pattern:     "",
-		HandlerFunc: handler.Create,
+		HandlerFunc: controller.Create,
 	})
 	// Update
 	routes = append(routes, Route{
 		Name:        "Update a task",
 		Method:      http.MethodPut,
 		Pattern:     "/{id}",
-		HandlerFunc: handler.Update,
+		HandlerFunc: controller.Update,
 	})
 	// Delete
 	routes = append(routes, Route{
 		Name:        "Delete a task",
 		Method:      http.MethodDelete,
 		Pattern:     "/{id}",
-		HandlerFunc: handler.Delete,
+		HandlerFunc: controller.Delete,
 	})
 
-	handler.Routes = routes
+	controller.Routes = routes
 
-	return &handler
+	return &controller
 }
 
 // GetAll retrieve all entities with optional paging of items (start / end are item counts 50 to 100 for example)
-func (sh *TaskHandler) GetAll(w http.ResponseWriter, r *http.Request) {
+func (sh *TaskController) GetAll(w http.ResponseWriter, r *http.Request) {
 
 	startStr := ParamAsString("start", r)
 	endStr := ParamAsString("end", r)
@@ -103,7 +103,7 @@ func (sh *TaskHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get retrieve an entity by id
-func (sh *TaskHandler) Get(w http.ResponseWriter, r *http.Request) {
+func (sh *TaskController) Get(w http.ResponseWriter, r *http.Request) {
 	// get the task's ID from the URL
 	taskID := ParamAsString("id", r)
 
@@ -126,7 +126,7 @@ func (sh *TaskHandler) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 // Create create an entity
-func (sh *TaskHandler) Create(w http.ResponseWriter, r *http.Request) {
+func (sh *TaskController) Create(w http.ResponseWriter, r *http.Request) {
 	// task to be created
 	task := &model.Task{}
 	// get the content body
@@ -151,7 +151,7 @@ func (sh *TaskHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 // Update update an entity by id
-func (sh *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
+func (sh *TaskController) Update(w http.ResponseWriter, r *http.Request) {
 	// get the task ID from the URL
 	taskID := ParamAsString("id", r)
 
@@ -180,7 +180,7 @@ func (sh *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 // Delete delete an entity by id
-func (sh *TaskHandler) Delete(w http.ResponseWriter, r *http.Request) {
+func (sh *TaskController) Delete(w http.ResponseWriter, r *http.Request) {
 	// get the task ID from the URL
 	taskID := ParamAsString("id", r)
 

@@ -20,7 +20,7 @@ type Route struct {
 }
 
 // NewRouter creates a new router instance
-func NewRouter(handler *TaskHandler) *Router {
+func NewRouter(controller *TaskController) *Router {
 	// new router
 	router := Router{mux.NewRouter()}
 
@@ -31,11 +31,11 @@ func NewRouter(handler *TaskHandler) *Router {
 	router.StrictSlash(false)
 
 	// add routes of handler
-	for _, route := range handler.Routes {
+	for _, route := range controller.Routes {
 		logger.WithField("route", route).Debug("adding route to mux")
 		router.
 			Methods(route.Method).
-			Path(handler.Prefix + route.Pattern).
+			Path(controller.Prefix + route.Pattern).
 			Name(route.Name).
 			Handler(route.HandlerFunc)
 	}

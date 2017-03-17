@@ -12,12 +12,12 @@ import (
 )
 
 // This test is composed by several subtests and uses httptest.ResponseRecorder type to record http response.
-// These are NOT end-to-end tests as we are directly calling the handler methods we want to test.
-func TestTaskHandlerGet(t *testing.T) {
+// These are NOT end-to-end tests as we are directly calling the controller methods we want to test.
+func TestTaskControllerGet(t *testing.T) {
 
 	// get mock dao
 	daoMock, _ := dao.GetTaskDAO("", dao.DAOMock)
-	handler := NewTaskHandler(daoMock)
+	controller := NewTaskController(daoMock)
 
 	t.Run("Get all tasks", func(t *testing.T) {
 		// build a request
@@ -27,7 +27,7 @@ func TestTaskHandlerGet(t *testing.T) {
 		res := httptest.NewRecorder()
 
 		// execute the query
-		handler.GetAll(res, req)
+		controller.GetAll(res, req)
 
 		var taskOut []model.Task
 		if err := json.NewDecoder(res.Body).Decode(&taskOut); err != nil {
@@ -53,7 +53,7 @@ func TestTaskHandlerGet(t *testing.T) {
 		// execute the query
 		//handler.Get(res, req) ==> the path parameter {id} will not be extracted if you call the handler method directly
 		// That's why we use a router instead.
-		router := NewRouter(handler)
+		router := NewRouter(controller)
 		router.ServeHTTP(res, req)
 
 		var taskOut model.Task
@@ -88,7 +88,7 @@ func TestTaskHandlerGet(t *testing.T) {
 		res := httptest.NewRecorder()
 
 		// execute the query
-		handler.Create(res, req)
+		controller.Create(res, req)
 
 		var taskOut model.Task
 		if err := json.NewDecoder(res.Body).Decode(&taskOut); err != nil {
@@ -109,7 +109,7 @@ func TestTaskHandlerGet(t *testing.T) {
 
 // This test is composed by several subtests and uses httptest.Server type to setup a real local server for testing.
 // These ARE end-to-end tests as we are making http requests just as any client would do, without calling any method directly.
-func TestTaskHandlerGetServer(t *testing.T) {
+func TestTaskControllerGetServer(t *testing.T) {
 
 	srv, err := BuildWebServer("", dao.DAOMock, 250*time.Millisecond)
 	if err != nil {
@@ -196,14 +196,14 @@ func TestTaskHandlerGetServer(t *testing.T) {
 	})
 }
 
-func BenchmarkTaskHandlerGet(t *testing.B) {
+func BenchmarkTaskControllerGet(t *testing.B) {
 
 	// tooling purpose
 	_ = new([45000]int)
 
 	// get mock dao
 	daoMock, _ := dao.GetTaskDAO("", dao.DAOMock)
-	handler := NewTaskHandler(daoMock)
+	handler := NewTaskController(daoMock)
 
 	// build a request
 	req, err := http.NewRequest("GET", "localhost/tasks", nil)

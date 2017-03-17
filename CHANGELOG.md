@@ -1,5 +1,6 @@
 # Changelog
 ## v0.0.1 [Unreleased]
+- 17/03/17 refact(web): rename handler to controller (SFR)
 - 17/03/14 refact(dao): go fmt src, update DAO with typed const (SFR)
            chore(make): clean the clean target to prevent glide.lock removal
 - 17/03/12 refact(dao): update model and dao to use UUID (SFR)

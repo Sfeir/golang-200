@@ -21,12 +21,6 @@ func BuildWebServer(db string, daoType dao.DBType, statisticsDuration time.Durat
 	// web server
 	n := negroni.New()
 
-	// new route handler
-	handler := NewTaskHandler(dao)
-
-	// new router
-	router := NewRouter(handler)
-
 	// add middleware for logging
 	n.Use(negronilogrus.NewMiddlewareFromLogger(logger.StandardLogger(), "task"))
 
@@ -39,6 +33,12 @@ func BuildWebServer(db string, daoType dao.DBType, statisticsDuration time.Durat
 	n.Use(NewStatisticsMiddleware(statisticsDuration))
 
 	// add as many middleware as you like
+
+	// new controller
+	controller := NewTaskController(dao)
+
+	// new router
+	router := NewRouter(controller)
 
 	// route handler goes last
 	n.UseHandler(router)
