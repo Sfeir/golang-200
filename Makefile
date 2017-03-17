@@ -114,7 +114,7 @@ dockerUp:
 dockerStop:
 	docker-compose stop
 	docker-compose kill
-	docker-compose rm
+	docker-compose rm -f
 
 dockerBuildUp: dockerStop dockerBuild dockerUp
 
