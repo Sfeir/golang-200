@@ -77,11 +77,11 @@ setupTest: teardownTest
 test: setupTest
 	@export MONGODB_SRV=mongodb://$(DOCKER_IP)/tasks; go test -v $(PKGS); make teardownTest
 
-bench:
-	@go test -v -run TestTaskHandlerGet -bench=. -memprofile=prof.mem github.com/Sfeir/golang-200/web
+bench: setupTest
+	@go test -v -run TestTaskControllerGet -bench=. -memprofile=prof.mem github.com/Sfeir/golang-200/web ; make teardownTest
 
 benchTool: bench
-	@echo "### TIP : type 'top 5' and 'list the first item'"
+	@echo "### TIP : type 'top 5' and 'list path_of_the_first_item'"
 	@go tool pprof --alloc_space web.test prof.mem
 
 lint:

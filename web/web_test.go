@@ -7,9 +7,15 @@ import (
 	"github.com/Sfeir/golang-200/model"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 	"time"
 )
+
+func init() {
+	// set timezone as UTC for bson/json time marshalling
+	time.Local = time.UTC
+}
 
 // This test is composed by several subtests and uses httptest.ResponseRecorder type to record http response.
 // These are NOT end-to-end tests as we are directly calling the controller methods we want to test.
@@ -111,13 +117,50 @@ func TestTaskControllerGet(t *testing.T) {
 // These ARE end-to-end tests as we are making http requests just as any client would do, without calling any method directly.
 func TestTaskControllerGetServer(t *testing.T) {
 
-	srv, err := BuildWebServer("", dao.DAOMock, 250*time.Millisecond)
+	// get config
+	config := os.Getenv("MONGODB_SRV")
+
+	srv, err := BuildWebServer(config, dao.DAOMongo, 250*time.Millisecond)
 	if err != nil {
 		t.Error(err)
 	}
 
 	ts := httptest.NewServer(srv)
 	defer ts.Close()
+
+	// task for testing
+	var taskTest model.Task
+
+	t.Run("Create a task (end-to-end)", func(t *testing.T) {
+		task := model.Task{
+			Title:        "Some task",
+			Description:  "That's an example of task.",
+			Status:       model.StatusTodo,
+			Priority:     model.PriorityMinor,
+			CreationDate: time.Date(2017, 06, 01, 0, 0, 0, 0, time.UTC),
+			DueDate:      time.Date(2017, 07, 12, 0, 0, 0, 0, time.UTC),
+		}
+		body, _ := json.Marshal(task)
+
+		res, err := http.Post(ts.URL+"/tasks", "application/json", bytes.NewReader(body))
+		if err != nil {
+			t.Error(err)
+		}
+
+		if err := json.NewDecoder(res.Body).Decode(&taskTest); err != nil {
+			t.Errorf("Unable to get JSON content %v", err)
+		}
+		res.Body.Close()
+
+		if res.StatusCode != http.StatusCreated {
+			t.Errorf("Wrong response code. Got %d instead of %d.", res.StatusCode, http.StatusCreated)
+		}
+
+		task.ID = taskTest.ID
+		if task != taskTest {
+			t.Errorf("Expected different from %v output %v", task, taskTest)
+		}
+	})
 
 	t.Run("Get all tasks (end-to-end)", func(t *testing.T) {
 
@@ -136,14 +179,14 @@ func TestTaskControllerGetServer(t *testing.T) {
 			t.Errorf("Wrong response code. Got %d instead of %d.", res.StatusCode, http.StatusOK)
 		}
 
-		if resTask[0] != dao.MockedTask {
-			t.Error("Wrong response body")
+		if resTask[0] != taskTest {
+			t.Errorf("Expected different from %v output %v", resTask[0], taskTest)
 		}
 	})
 
 	t.Run("Get one task (end-to-end)", func(t *testing.T) {
 
-		res, err := http.Get(ts.URL + "/tasks/" + dao.MockedTask.ID)
+		res, err := http.Get(ts.URL + "/tasks/" + taskTest.ID)
 		if err != nil {
 			t.Error(err)
 		}
@@ -158,47 +201,16 @@ func TestTaskControllerGetServer(t *testing.T) {
 			t.Errorf("Wrong response code. Got %d instead of %d.", res.StatusCode, http.StatusOK)
 		}
 
-		if resTask != dao.MockedTask {
-			t.Error("Wrong response body")
+		if resTask != taskTest {
+			t.Errorf("Expected different from %v output %v", resTask, taskTest)
 		}
 	})
 
-	t.Run("Create a task (end-to-end)", func(t *testing.T) {
-		task := model.Task{
-			Title:        "Some task",
-			Description:  "That's an example of task.",
-			Status:       model.StatusTodo,
-			Priority:     model.PriorityMinor,
-			CreationDate: time.Date(2017, 06, 01, 0, 0, 0, 0, time.UTC),
-			DueDate:      time.Date(2017, 07, 12, 0, 0, 0, 0, time.UTC),
-		}
-		body, _ := json.Marshal(task)
-
-		res, err := http.Post(ts.URL+"/tasks", "application/json", bytes.NewReader(body))
-		if err != nil {
-			t.Error(err)
-		}
-
-		var taskOut model.Task
-		if err := json.NewDecoder(res.Body).Decode(&taskOut); err != nil {
-			t.Errorf("Unable to get JSON content %v", err)
-		}
-		res.Body.Close()
-
-		if res.StatusCode != http.StatusCreated {
-			t.Errorf("Wrong response code. Got %d instead of %d.", res.StatusCode, http.StatusCreated)
-		}
-
-		task.ID = taskOut.ID
-		if task != taskOut {
-			t.Errorf("Expected different from %v output %v", task, taskOut)
-		}
-	})
 }
 
 func BenchmarkTaskControllerGet(t *testing.B) {
 
-	// tooling purpose
+	// tooling memprofile test purpose
 	_ = new([45000]int)
 
 	// get mock dao
@@ -224,15 +236,8 @@ func BenchmarkTaskControllerGet(t *testing.B) {
 		t.Errorf("Unable to get JSON content %v", err)
 	}
 
-	expected := model.Task{
-		Title:        "Learn Go",
-		Description:  "Let's learn the Go programming language and how to use it in a real project to make great programs.",
-		Status:       model.StatusInProgress,
-		Priority:     model.PriorityHigh,
-		CreationDate: time.Date(2017, 01, 01, 0, 0, 0, 0, time.UTC),
+	if dao.MockedTask != taskOut[0] {
+		t.Errorf("Expected different from %v output %v", dao.MockedTask, taskOut)
 	}
 
-	if expected != taskOut[0] {
-		t.Errorf("Expected different from %v output %v", expected, taskOut)
-	}
 }

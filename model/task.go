@@ -31,7 +31,7 @@ const (
 
 // Task is the structure to define a task to be done
 type Task struct {
-	ID           string       `json:"id" bson:"id"`
+	ID           string       `json:"id,omitempty" bson:"id"`
 	Title        string       `json:"title" bson:"title"`
 	Description  string       `json:"description" bson:"description"`
 	Status       TaskStatus   `json:"status" bson:"status"`

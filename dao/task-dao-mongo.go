@@ -9,6 +9,9 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+// compilation time interface check
+var _ TaskDAO = (*TaskDAOMongo)(nil)
+
 const (
 	collection = "tasks"
 	index      = "id"
@@ -111,7 +114,7 @@ func (s *TaskDAOMongo) Save(task *model.Task) error {
 	return c.Insert(task)
 }
 
-// Upsert updates or creates a task
+// Upsert updates or creates a task, returns true if updated, false otherwise or on error
 func (s *TaskDAOMongo) Upsert(task *model.Task) (bool, error) {
 
 	// check ID

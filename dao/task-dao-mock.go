@@ -7,6 +7,9 @@ import (
 	"time"
 )
 
+// compilation time interface check
+var _ TaskDAO = (*TaskDAOMock)(nil)
+
 // MockedTask is the task returned by this mocked interface
 var MockedTask = model.Task{
 	ID:           uuid.NewV4().String(),
