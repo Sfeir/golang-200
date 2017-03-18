@@ -21,11 +21,15 @@ func init() {
 // These are NOT end-to-end tests as we are directly calling the controller methods we want to test.
 func TestTaskControllerGet(t *testing.T) {
 
-	// get mock dao
-	daoMock, _ := dao.GetTaskDAO("", dao.DAOMock)
-	controller := NewTaskController(daoMock)
+	newControllerTest := func() *TaskController {
+		daoMock, _ := dao.GetTaskDAO("", dao.DAOMock)
+		return NewTaskController(daoMock)
+	}
 
 	t.Run("Get all tasks", func(t *testing.T) {
+		t.Parallel()
+		controller := newControllerTest()
+
 		// build a request
 		req := httptest.NewRequest(http.MethodGet, "/tasks", nil)
 
@@ -50,6 +54,9 @@ func TestTaskControllerGet(t *testing.T) {
 	})
 
 	t.Run("Get one task", func(t *testing.T) {
+		t.Parallel()
+		controller := newControllerTest()
+
 		// build a request
 		req := httptest.NewRequest(http.MethodGet, "/tasks/"+dao.MockedTask.ID, nil)
 
@@ -77,6 +84,9 @@ func TestTaskControllerGet(t *testing.T) {
 	})
 
 	t.Run("Create a task", func(t *testing.T) {
+		t.Parallel()
+		controller := newControllerTest()
+
 		// build a request
 		task := model.Task{
 			Title:        "Some task",
@@ -208,10 +218,7 @@ func TestTaskControllerGetServer(t *testing.T) {
 
 }
 
-func BenchmarkTaskControllerGet(t *testing.B) {
-
-	// tooling memprofile test purpose
-	_ = new([45000]int)
+func BenchmarkTaskControllerGet(b *testing.B) {
 
 	// get mock dao
 	daoMock, _ := dao.GetTaskDAO("", dao.DAOMock)
@@ -220,24 +227,55 @@ func BenchmarkTaskControllerGet(t *testing.B) {
 	// build a request
 	req, err := http.NewRequest("GET", "localhost/tasks", nil)
 	if err != nil {
-		t.Fatal(err)
+		b.Fatal(err)
 	}
 
-	// build the recorder
-	res := httptest.NewRecorder()
 
-	// execute the query
-	handler.GetAll(res, req)
+	for n := 0; n < b.N; n++ {
+		// build the recorder
+		res := httptest.NewRecorder()
 
-	var taskOut []model.Task
-	err = json.NewDecoder(res.Body).Decode(&taskOut)
-
-	if err != nil {
-		t.Errorf("Unable to get JSON content %v", err)
+		// execute the query
+		handler.GetAll(res, req)
 	}
+}
 
-	if dao.MockedTask != taskOut[0] {
-		t.Errorf("Expected different from %v output %v", dao.MockedTask, taskOut)
+func BenchmarkTaskControllerPost(b *testing.B) {
+
+	// get mock dao
+	daoMock, _ := dao.GetTaskDAO("", dao.DAOMock)
+	controller := NewTaskController(daoMock)
+
+	// build a request
+	task := model.Task{
+		Title:        "Some task",
+		Description:  "That's an example of task.",
+		Status:       model.StatusTodo,
+		Priority:     model.PriorityMinor,
+		CreationDate: time.Date(2017, 06, 01, 0, 0, 0, 0, time.UTC),
+		DueDate:      time.Date(2017, 07, 12, 0, 0, 0, 0, time.UTC),
 	}
+	body, _ := json.Marshal(task)
 
+	for n := 0; n < b.N; n++ {
+		req, err := http.NewRequest(http.MethodPost, "/tasks", bytes.NewReader(body))
+		if err != nil {
+			b.Fatal(err)
+		}
+
+		// build the recorder
+		res := httptest.NewRecorder()
+
+		// execute the query
+		controller.Create(res, req)
+	}
+}
+
+// This benchmark illustrates how memory allocations are visible with PPROF
+// $ make benchTool
+func BenchmarkHugeMemoryAllocation(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		// Make some "huge" memory allocation
+		_ = new([45000]int)
+	}
 }
