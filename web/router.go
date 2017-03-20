@@ -33,11 +33,7 @@ func NewRouter(controller *TaskController) *Router {
 	// add routes of handler
 	for _, route := range controller.Routes {
 		logger.WithField("route", route).Debug("adding route to mux")
-		router.
-			Methods(route.Method).
-			Path(controller.Prefix + route.Pattern).
-			Name(route.Name).
-			Handler(route.HandlerFunc)
+		// TODO add each route by its Methods, Path (prefix+pattern), Name and handler using the builder
 	}
 
 	return &router

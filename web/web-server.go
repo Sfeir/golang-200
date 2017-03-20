@@ -11,13 +11,9 @@ import (
 // BuildWebServer constructs a new web server with the right DAO and tasks handler
 func BuildWebServer(db string, daoType dao.DBType, statisticsDuration time.Duration) (*negroni.Negroni, error) {
 
+	// TODO fail fast, try to get the DAO of the required type and return (nil,error) if it fails
+	// TODO don't forget to log the error and the parameters
 	// task dao
-	dao, err := dao.GetTaskDAO(db, daoType)
-	if err != nil {
-		logger.WithField("error", err).WithField("dbtype", dao).WithField("params", db).
-			Warn("unable to build the required DAO")
-		return nil, err
-	}
 
 	// web server
 	n := negroni.New()
@@ -30,19 +26,15 @@ func BuildWebServer(db string, daoType dao.DBType, statisticsDuration time.Durat
 	recovery.PrintStack = false
 	n.Use(recovery)
 
-	// add statistics middleware
-	n.Use(NewStatisticsMiddleware(statisticsDuration))
+	// TODO add statistics middleware
 
 	// add as many middleware as you like
 
-	// new controller
-	controller := NewTaskController(dao)
+	// TODO build a new controller from the DAO
 
-	// new router
-	router := NewRouter(controller)
+	// TODO build a new router from the controller
 
-	// route handler goes last
-	n.UseHandler(router)
+	// TODO declare the route handler in last position using UseHandler function
 
 	return n, nil
 }

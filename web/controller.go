@@ -43,27 +43,14 @@ func NewTaskController(taskDAO dao.TaskDAO) *TaskController {
 		Pattern:     "/{id}",
 		HandlerFunc: controller.Get,
 	})
+	// TODO add the create route as a Post with no ID, calling create method
 	// Create
-	routes = append(routes, Route{
-		Name:        "Create a task",
-		Method:      http.MethodPost,
-		Pattern:     "",
-		HandlerFunc: controller.Create,
-	})
+
+	// TODO add the update route as a Put with an ID url param, calling update method
 	// Update
-	routes = append(routes, Route{
-		Name:        "Update a task",
-		Method:      http.MethodPut,
-		Pattern:     "/{id}",
-		HandlerFunc: controller.Update,
-	})
+
+	// TODO add the delete route as a Delete with an ID url param, calling Delete method
 	// Delete
-	routes = append(routes, Route{
-		Name:        "Delete a task",
-		Method:      http.MethodDelete,
-		Pattern:     "/{id}",
-		HandlerFunc: controller.Delete,
-	})
 
 	controller.Routes = routes
 
@@ -127,27 +114,21 @@ func (sh *TaskController) Get(w http.ResponseWriter, r *http.Request) {
 
 // Create create an entity
 func (sh *TaskController) Create(w http.ResponseWriter, r *http.Request) {
+	// TODO declare a pointer to a task to be decoded
 	// task to be created
-	task := &model.Task{}
+
+	// TODO retrieve the content of the task in the request using GetJSONContent
 	// get the content body
-	err := GetJSONContent(task, r)
 
-	if err != nil {
-		logger.WithField("error", err).Warn("unable to decode task to create")
-		SendJSONError(w, "Error while decoding task to create", http.StatusBadRequest)
-		return
-	}
+	// TODO if an error occurs, log it, send an error as a Bad Request and return
 
+	// TODO if ok, save the task with the DAO
 	// save task
-	err = sh.taskDao.Save(task)
-	if err != nil {
-		logger.WithField("error", err).WithField("task", *task).Warn("unable to create task")
-		SendJSONError(w, "Error while creating task", http.StatusInternalServerError)
-		return
-	}
 
+	// TODO if error occurs, log it, send an error as an Internal Server Error and return
+
+	// TODO if ok send the created task (with ID) and Status Created to the client with SendJSONWithHTTPCode
 	// send response
-	SendJSONWithHTTPCode(w, task, http.StatusCreated)
 }
 
 // Update update an entity by id
@@ -181,17 +162,12 @@ func (sh *TaskController) Update(w http.ResponseWriter, r *http.Request) {
 
 // Delete delete an entity by id
 func (sh *TaskController) Delete(w http.ResponseWriter, r *http.Request) {
-	// get the task ID from the URL
-	taskID := ParamAsString("id", r)
+	// TODO get the task ID from the URL using ParamAsString function
 
-	// find task
-	err := sh.taskDao.Delete(taskID)
-	if err != nil {
-		logger.WithField("error", err).WithField("task ID", taskID).Warn("unable to delete task by ID")
-		SendJSONError(w, "Error while deleting task by ID", http.StatusInternalServerError)
-		return
-	}
+	// TODO delete the task by its ID
 
-	logger.WithField("taskID", taskID).Debug("task deleted")
-	SendJSONWithHTTPCode(w, nil, http.StatusNoContent)
+	// TODO if error, log it, send an error Internal Server Error and return
+
+	// TODO log the successful deletion
+	// TODO send an empty response to the client with No Content status
 }
