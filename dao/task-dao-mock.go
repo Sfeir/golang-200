@@ -1,24 +1,19 @@
 package dao
 
 import (
-	"errors"
 	"github.com/Sfeir/golang-200/model"
 	"github.com/satori/go.uuid"
-	"time"
 )
 
 // compilation time interface check
 var _ TaskDAO = (*TaskDAOMock)(nil)
 
+// TODO add the missing attributes (ID, Priority, dates) to have a complete Task
 // MockedTask is the task returned by this mocked interface
 var MockedTask = model.Task{
-	ID:           uuid.NewV4().String(),
-	Title:        "Learn Go",
-	Description:  "Let's learn the Go programming language and how to use it in a real project to make great programs.",
-	Status:       model.StatusInProgress,
-	Priority:     model.PriorityHigh,
-	CreationDate: time.Date(2017, 01, 01, 0, 0, 0, 0, time.UTC),
-	DueDate:      time.Date(2017, 01, 02, 0, 0, 0, 0, time.UTC),
+	Title:       "Learn Go",
+	Description: "Let's learn the Go programming language and how to use it in a real project to make great programs.",
+	Status:      model.StatusInProgress,
 }
 
 // TaskDAOMock is the mocked implementation of the TaskDAO
@@ -28,23 +23,21 @@ type TaskDAOMock struct {
 
 // NewTaskDAOMock creates a new TaskDAO with a mocked implementation
 func NewTaskDAOMock() TaskDAO {
-	daoMock := &TaskDAOMock{
-		storage: make(map[string]*model.Task),
-	}
+	// TODO build a new TaskDAOMock initializing the map with make
 
-	// Adds some fake data
-	daoMock.Save(&MockedTask)
+	// TODO add the mocked task using Save method
 
-	return daoMock
+	return nil
 }
 
 // GetByID returns a task by its ID
 func (s *TaskDAOMock) GetByID(ID string) (*model.Task, error) {
-	task, ok := s.storage[ID]
-	if !ok {
-		return nil, errors.New("Task not found with ID " + ID)
-	}
-	return task, nil
+	// TODO check the map contains the ID
+
+	// TODO if not return nil and a new error
+
+	// TODO if ok return the pointer to the task
+	return nil, nil
 }
 
 // GetAll returns all tasks with paging capability
@@ -76,10 +69,8 @@ func (s *TaskDAOMock) GetByTitle(title string) ([]model.Task, error) {
 
 // GetByStatus returns all tasks by status
 func (s *TaskDAOMock) GetByStatus(status model.TaskStatus) ([]model.Task, error) {
-	tasks := s.getBy(func(task *model.Task) bool {
-		return task.Status == status
-	})
-	return tasks, nil
+	// TODO implement the GetByStatus function using an anonymous function comparing the status to the param
+	return nil, nil
 }
 
 // GetByStatusAndPriority returns all tasks by status and priority
@@ -92,21 +83,19 @@ func (s *TaskDAOMock) GetByStatusAndPriority(status model.TaskStatus, priority m
 
 // getBy returns all tasks that meet filtering conditions
 func (s *TaskDAOMock) getBy(filter func(task *model.Task) bool) []model.Task {
+	// result set
 	var tasks []model.Task
-	for _, task := range s.storage {
-		if filter(task) {
-			tasks = append(tasks, *task)
-		}
-	}
+	// TODO iterate over the map storage
+	// TODO call the filter function on each item and add it to the result set if it matches
 	return tasks
 }
 
 // Save saves the task
 func (s *TaskDAOMock) Save(task *model.Task) error {
-	if len(task.ID) == 0 {
-		task.ID = uuid.NewV4().String()
-	}
-	s.storage[task.ID] = task
+	// TODO check that the task has an ID
+	// TODO if not add one
+
+	// TODO save the newly created task to the map
 	return nil
 }
 
@@ -123,6 +112,6 @@ func (s *TaskDAOMock) Upsert(task *model.Task) (bool, error) {
 
 // Delete deletes a tasks by its ID
 func (s *TaskDAOMock) Delete(ID string) error {
-	delete(s.storage, ID)
+	// TODO delete the task with the given ID
 	return nil
 }

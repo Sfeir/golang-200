@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"errors"
 	"github.com/Sfeir/golang-200/model"
 	logger "github.com/Sirupsen/logrus"
 	"github.com/satori/go.uuid"
@@ -45,36 +44,35 @@ func NewTaskDAOMongo(session *mgo.Session) TaskDAO {
 // GetByID returns a task by its ID
 func (s *TaskDAOMongo) GetByID(ID string) (*model.Task, error) {
 
-	// check ID
-	if _, err := uuid.FromString(ID); err != nil {
-		return nil, errors.New("Invalid input to UUID")
-	}
+	// TODO check in one ligne that the ID is a valid UUID using FromString function
+	// TODO fail fast, return an error if its not the case
 
-	session := s.session.Copy()
-	defer session.Close()
+	// TODO Copy the current MongoDB session
+	// TODO defer the close of the session
 
-	task := model.Task{}
-	c := session.DB("").C(collection)
-	err := c.Find(bson.M{"id": ID}).One(&task)
-	return &task, err
+	// TODO create an empty task to be used as a result container
+	// TODO retrieve the collection from the sesison using const
+	// TODO Find the unique task having bson.M{"id": ID}
+	// TODO return the result and the error
+	return nil, nil
 }
 
 // getAllTasksByQuery returns tasks by query and paging capability
 func (s *TaskDAOMongo) getAllTasksByQuery(query interface{}, start, end int) ([]model.Task, error) {
-	session := s.session.Copy()
-	defer session.Close()
-	c := session.DB("").C(collection)
+	// TODO Copy the current MongoDB session
+	// TODO defer the close of the session
+	// TODO retrieve the collection from the sesison using const
 
-	// check param
-	hasPaging := start > NoPaging && end > NoPaging && end > start
+	// TODO check param start and end are not set to NoPaging and are ordered
+	hasPaging := true
 
 	// perform request
 	var err error
 	tasks := []model.Task{}
 	if hasPaging {
-		err = c.Find(query).Skip(start).Limit(end - start).All(&tasks)
+		// TODO use the Find Method with Skip and Limit (to be calculated) parameters to retrieve all the results
 	} else {
-		err = c.Find(query).All(&tasks)
+		// TODO use only the Find method
 	}
 
 	return tasks, err
@@ -97,7 +95,8 @@ func (s *TaskDAOMongo) GetByStatus(status model.TaskStatus) ([]model.Task, error
 
 // GetByStatusAndPriority returns all tasks by status and priority
 func (s *TaskDAOMongo) GetByStatusAndPriority(status model.TaskStatus, priority model.TaskPriority) ([]model.Task, error) {
-	return s.getAllTasksByQuery(bson.M{"status": status, "priority": priority}, NoPaging, NoPaging)
+	// TODO use the generic getAllTasksByQuery method to build the resultset without paging
+	return nil, nil
 }
 
 // Save saves the task
@@ -136,14 +135,15 @@ func (s *TaskDAOMongo) Upsert(task *model.Task) (bool, error) {
 // Delete deletes a tasks by its ID
 func (s *TaskDAOMongo) Delete(ID string) error {
 
-	// check ID
-	if _, err := uuid.FromString(ID); err != nil {
-		return errors.New("Invalid input to UUID")
-	}
+	// TODO check in one ligne that the ID is a valid UUID using FromString function
+	// TODO fail fast, return an error if its not the case
 
-	session := s.session.Copy()
-	defer session.Close()
-	c := session.DB("").C(collection)
-	err := c.Remove(bson.M{"id": ID})
-	return err
+	// TODO Copy the current MongoDB session
+	// TODO defer the close of the session
+	// TODO retrieve the collection from the sesison using const
+
+	// TODO Remove the Task with the given ID
+
+	// TODO return the error
+	return nil
 }

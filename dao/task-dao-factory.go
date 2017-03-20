@@ -41,11 +41,13 @@ func GetTaskDAO(param string, daoType DBType) (TaskDAO, error) {
 		mgoSession.SetSocketTimeout(timeout)
 		// set mode
 		mgoSession.SetMode(mgo.Monotonic, true)
-		mgoSession.SetPoolLimit(poolSize)
+		// TODO set the connection pool size using the poolSize const
 
-		return NewTaskDAOMongo(mgoSession), nil
+		// TODO return a new DAO Mongo build with the configured session
+		return nil, nil
 	case DAOMock:
-		return NewTaskDAOMock(), nil
+		// TODO return a new mocked DAO instance
+		return nil, nil
 	default:
 		return nil, ErrorDAONotFound
 	}
