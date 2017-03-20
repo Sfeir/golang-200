@@ -230,7 +230,6 @@ func BenchmarkTaskControllerGet(b *testing.B) {
 		b.Fatal(err)
 	}
 
-
 	for n := 0; n < b.N; n++ {
 		// build the recorder
 		res := httptest.NewRecorder()

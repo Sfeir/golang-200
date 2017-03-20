@@ -14,7 +14,8 @@ func BuildWebServer(db string, daoType dao.DBType, statisticsDuration time.Durat
 	// task dao
 	dao, err := dao.GetTaskDAO(db, daoType)
 	if err != nil {
-		logger.WithField("error", err).WithField("connection string", db).Fatal("unable to connect to mongo db")
+		logger.WithField("error", err).WithField("dbtype", dao).WithField("params", db).
+			Warn("unable to build the required DAO")
 		return nil, err
 	}
 
