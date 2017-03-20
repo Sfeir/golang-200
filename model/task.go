@@ -1,46 +1,28 @@
 package model
 
-import (
-	"github.com/satori/go.uuid"
-	"time"
-)
-
+// TODO build the TaskStatus type as an int
 // TaskStatus is the current processing status of a task
-type TaskStatus int
 
-const (
-	// StatusTodo is used for incomplete tasks
-	StatusTodo TaskStatus = iota
-	// StatusInProgress is used for tasks in progress
-	StatusInProgress
-	// StatusDone is used for completed tasks
-	StatusDone
-)
+// TODO define the Task status enum as const using iota (StatusTodo, StatusInProgress, StatusDone)
+const ()
 
+// TODO build the TaskPriority type as an int
 // TaskPriority is the priority of a task
-type TaskPriority int
 
-const (
-	// PriorityMinor is used for task with a lower priority
-	PriorityMinor TaskPriority = iota
-	// PriorityMedium is used for task with medium priority
-	PriorityMedium
-	// PriorityHigh is used for task with high priority
-	PriorityHigh
-)
+// TODO define the Task Priority enum as const using iota (PriorityMinor, PriorityMedium, PriorityHigh)
+const ()
 
+// TODO add the Status and Priority enums, the Creation and Due Dates and the JSON ans BSON annotations
 // Task is the structure to define a task to be done
 type Task struct {
-	ID           string       `json:"id,omitempty" bson:"id"`
-	Title        string       `json:"title" bson:"title"`
-	Description  string       `json:"description" bson:"description"`
-	Status       TaskStatus   `json:"status" bson:"status"`
-	Priority     TaskPriority `json:"priority" bson:"priority"`
-	CreationDate time.Time    `json:"creationDate" bson:"creationDate"`
-	DueDate      time.Time    `json:"dueDate" bson:"dueDate"`
+	ID          string
+	Title       string
+	Description string
+	// TODO Status
+	// TODO Priority
+	// TODO Creation Date
+	// TODO Due Date
 }
 
+// TODO add a NewID method to the Task struct to create a new UUID for the task when called
 // NewID returns the ID of a Task as a string
-func (s *Task) NewID() {
-	s.ID = uuid.NewV4().String()
-}
