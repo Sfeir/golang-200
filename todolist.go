@@ -14,6 +14,7 @@ import (
 )
 
 var (
+	// TODO watch these variable initialized from the build args in the makefile
 	// Version is the version of the software
 	Version string
 	// BuildStmp is the build date
@@ -57,16 +58,8 @@ func main() {
 
 	// command line flags
 	app.Flags = []cli.Flag{
-		cli.IntFlag{
-			Value: port,
-			Name:  "port",
-			Usage: "Set the listening port of the webserver",
-		},
-		cli.StringFlag{
-			Value: db,
-			Name:  "db",
-			Usage: "Set the mongo database connection string",
-		},
+		// TODO add an Int flag called "port", for the webserver
+		// TODO add a String flag called "db", for the MongoDB connection string
 		cli.StringFlag{
 			Value: logLevel,
 			Name:  "logl",
@@ -77,11 +70,7 @@ func main() {
 			Name:  "logf",
 			Usage: "Set the log formatter (logstash or text)",
 		},
-		cli.DurationFlag{
-			Value: statisticsDuration,
-			Name:  "statd",
-			Usage: "Set the token duration (ex : 1h, 2h30m, 30s, 300ms)",
-		},
+		// TODO add a Duration flag called "statd" for the statistics duration (ex. 1h, 30s)
 	}
 
 	// main action
@@ -94,11 +83,11 @@ func main() {
 		time.Local = time.UTC
 
 		// parse parameters
-		port = c.Int("port")
-		db = c.String("db")
+		// TODO parse the "port" flag as an Int value
+		// TODO parse the "db" flag as a String value
 		logLevel = c.String("logl")
 		logFormat = c.String("logf")
-		statisticsDuration = c.Duration("statd")
+		// TODO parse the "statd" flag as a Duration
 
 		fmt.Print("* --------------------------------------------------- *\n")
 		fmt.Printf("|   port                    : %d\n", port)
