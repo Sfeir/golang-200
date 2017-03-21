@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	statPeriod    = 500 * time.Millisecond
+	statPeriod = 500 * time.Millisecond
 )
 
 func TestStatistics(t *testing.T) {

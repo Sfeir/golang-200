@@ -22,10 +22,10 @@ type TaskDAO interface {
 	GetByTitle(title string) ([]model.Task, error)
 
 	// GetByStatus returns all tasks by status
-	GetByStatus(status model.TaskStatus) ([]model.Task, error)
+	GetByStatus(status int) ([]model.Task, error)
 
 	// GetByStatusAndPriority returns all tasks by status and priority
-	GetByStatusAndPriority(status model.TaskStatus, priority model.TaskPriority) ([]model.Task, error)
+	GetByStatusAndPriority(status, priority int) ([]model.Task, error)
 
 	// Save saves the task
 	Save(task *model.Task) error
