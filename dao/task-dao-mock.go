@@ -13,7 +13,7 @@ var _ TaskDAO = (*TaskDAOMock)(nil)
 var MockedTask = model.Task{
 	Title:       "Learn Go",
 	Description: "Let's learn the Go programming language and how to use it in a real project to make great programs.",
-	Status:      model.StatusInProgress,
+	Status:      0,
 }
 
 // TaskDAOMock is the mocked implementation of the TaskDAO
@@ -68,15 +68,16 @@ func (s *TaskDAOMock) GetByTitle(title string) ([]model.Task, error) {
 }
 
 // GetByStatus returns all tasks by status
-func (s *TaskDAOMock) GetByStatus(status model.TaskStatus) ([]model.Task, error) {
+func (s *TaskDAOMock) GetByStatus(status int) ([]model.Task, error) {
 	// TODO implement the GetByStatus function using an anonymous function comparing the status to the param
 	return nil, nil
 }
 
 // GetByStatusAndPriority returns all tasks by status and priority
-func (s *TaskDAOMock) GetByStatusAndPriority(status model.TaskStatus, priority model.TaskPriority) ([]model.Task, error) {
+func (s *TaskDAOMock) GetByStatusAndPriority(status, priority int) ([]model.Task, error) {
 	tasks := s.getBy(func(task *model.Task) bool {
-		return task.Status == status && task.Priority == priority
+		// TODO implement the status and priority filter
+		return true
 	})
 	return tasks, nil
 }

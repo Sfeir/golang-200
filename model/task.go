@@ -18,7 +18,7 @@ type Task struct {
 	ID          string
 	Title       string
 	Description string
-	// TODO Status
+	Status      int
 	// TODO Priority
 	// TODO Creation Date
 	// TODO Due Date

@@ -89,12 +89,12 @@ func (s *TaskDAOMongo) GetByTitle(title string) ([]model.Task, error) {
 }
 
 // GetByStatus returns all tasks by status
-func (s *TaskDAOMongo) GetByStatus(status model.TaskStatus) ([]model.Task, error) {
+func (s *TaskDAOMongo) GetByStatus(status int) ([]model.Task, error) {
 	return s.getAllTasksByQuery(bson.M{"status": status}, NoPaging, NoPaging)
 }
 
 // GetByStatusAndPriority returns all tasks by status and priority
-func (s *TaskDAOMongo) GetByStatusAndPriority(status model.TaskStatus, priority model.TaskPriority) ([]model.Task, error) {
+func (s *TaskDAOMongo) GetByStatusAndPriority(status, priority int) ([]model.Task, error) {
 	// TODO use the generic getAllTasksByQuery method to build the resultset without paging
 	return nil, nil
 }
