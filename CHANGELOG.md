@@ -1,5 +1,6 @@
 # Changelog
-## v0.0.1 [Unreleased]
+## v0.0.1 [17/03/21]
+- 17/03/21 fix(main): fix the statd flag help message (SFR)
 - 17/03/20 fix(web): fix the Fatal log level in server build (SFR)
 - 17/03/17 refact(web): rename handler to controller (SFR)
            chore(test): add postman collection for testing
