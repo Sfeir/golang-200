@@ -1,8 +1,6 @@
 package statistics
 
 import (
-	"fmt"
-	logger "github.com/Sirupsen/logrus"
 	"time"
 )
 
@@ -10,44 +8,37 @@ const (
 	statisticsChannelSize = 1000
 )
 
+// TODO define a Statistics struct with an uint8 chan, an uint32 counter, a start time and logging period duration
 // Statistics is the worker to persist the request statistics
 type Statistics struct {
-	statistics    chan uint8
-	counter       uint32
-	start         time.Time
-	loggingPeriod time.Duration
 }
 
 // NewStatistics creates a new statistics structure and launches its worker routine
 func NewStatistics(loggingPeriod time.Duration) *Statistics {
-	sw := Statistics{
-		statistics:    make(chan uint8, statisticsChannelSize),
-		counter:       0,
-		start:         time.Now(),
-		loggingPeriod: loggingPeriod,
-	}
-	go sw.run()
-	return &sw
+	// TODO build a new Statistics object with a sized channel, initialized counter and start time
+	// TODO and logging period as param
+
+	// TODO launch the run in a separate Go routine in background
+
+	// TODO return the initialized and started object
+	return nil
 }
 
 // PlusOne is used to add one to the counter
 func (sw *Statistics) PlusOne() {
-	sw.statistics <- uint8(1)
+	// TODO push a hit in the statistics channel
 }
 
 func (sw *Statistics) run() {
-	ticker := time.NewTicker(sw.loggingPeriod)
-	for {
-		select {
-		case stat := <-sw.statistics:
-			logger.WithField("stat", stat).Debug("new count received")
-			sw.counter += uint32(stat)
-		case <-ticker.C:
-			elapsed := time.Since(sw.start)
-			logger.WithField("elapsed time", elapsed).WithField("count", sw.counter).
-				WithField("request per second", fmt.Sprintf("%.2f", float64(sw.counter)/elapsed.Seconds())).Warn("request monitoring")
-			sw.counter = 0
-			sw.start = time.Now()
-		}
-	}
+	// TODO build a new time Ticker from the logging period
+
+	// TODO build a infinite loop and the channel selection inside
+
+	// TODO build a first select case from the statistics channel
+	// TODO add the hit count to the counter and log it as debug level
+
+	// TODO build a second case on the time Ticker chan
+	// TODO retrieve the elapsed time since start
+	// TODO log the hit/sec rate
+	// TODO reset the counter and the start time
 }
