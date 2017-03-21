@@ -7,34 +7,13 @@ import (
 
 const (
 	statPeriod    = 500 * time.Millisecond
-	expectedCount = 2
-	emptyCount    = 0
 )
 
 func TestStatistics(t *testing.T) {
 
-	statistics := NewStatistics(2 * statPeriod)
+	//statistics := NewStatistics(2 * statPeriod)
 
-	// other go routine incrementing the counter
-	go func() {
-		statistics.PlusOne()
-	}()
-
-	// other go routine incrementing the counter
-	go func() {
-		statistics.PlusOne()
-	}()
-
-	time.Sleep(statPeriod)
-
-	if statistics.counter != expectedCount {
-		t.Errorf("Wrong statictics count %d is different from expected %d", statistics.counter, expectedCount)
-	}
-
-	time.Sleep(2 * statPeriod)
-
-	if statistics.counter != emptyCount {
-		t.Errorf("Wrong statictics count %d is different from expected %d", statistics.counter, emptyCount)
-	}
+	//TODO: implement this test to test the statistics middleware (test the value of its counter)
+	//TODO: you will need time.Sleep(statPeriod) because of the statistics ticker
 
 }
