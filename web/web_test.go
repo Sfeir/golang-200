@@ -85,40 +85,9 @@ func TestTaskControllerGet(t *testing.T) {
 
 	t.Run("Create a task", func(t *testing.T) {
 		t.Parallel()
-		controller := newControllerTest()
+		//controller := newControllerTest()
 
-		// build a request
-		task := model.Task{
-			Title:        "Some task",
-			Description:  "That's an example of task.",
-			Status:       model.StatusTodo,
-			Priority:     model.PriorityMinor,
-			CreationDate: time.Date(2017, 06, 01, 0, 0, 0, 0, time.UTC),
-			DueDate:      time.Date(2017, 07, 12, 0, 0, 0, 0, time.UTC),
-		}
-		body, _ := json.Marshal(task)
-
-		req := httptest.NewRequest(http.MethodPost, "/tasks", bytes.NewReader(body))
-
-		// build the recorder
-		res := httptest.NewRecorder()
-
-		// execute the query
-		controller.Create(res, req)
-
-		var taskOut model.Task
-		if err := json.NewDecoder(res.Body).Decode(&taskOut); err != nil {
-			t.Errorf("Unable to get JSON content %v", err)
-		}
-
-		if res.Code != http.StatusCreated {
-			t.Errorf("Wrong response code. Got %d instead of %d.", res.Code, http.StatusCreated)
-		}
-
-		task.ID = taskOut.ID
-		if task != taskOut {
-			t.Errorf("Expected different from %v output %v", task, taskOut)
-		}
+		// TODO: implement this unit test to test the creation of a Task through POST /tasks
 	})
 
 }
@@ -172,71 +141,8 @@ func TestTaskControllerGetServer(t *testing.T) {
 		}
 	})
 
-	t.Run("Get all tasks (end-to-end)", func(t *testing.T) {
+	//TODO: add subtests to test GET /tasks and GET /tasks/{id}
 
-		res, err := http.Get(ts.URL + "/tasks")
-		if err != nil {
-			t.Error(err)
-		}
-
-		var resTask []model.Task
-		if err := json.NewDecoder(res.Body).Decode(&resTask); err != nil {
-			t.Errorf("Unable to get JSON content %v", err)
-		}
-		res.Body.Close()
-
-		if res.StatusCode != http.StatusOK {
-			t.Errorf("Wrong response code. Got %d instead of %d.", res.StatusCode, http.StatusOK)
-		}
-
-		if resTask[0] != taskTest {
-			t.Errorf("Expected different from %v output %v", resTask[0], taskTest)
-		}
-	})
-
-	t.Run("Get one task (end-to-end)", func(t *testing.T) {
-
-		res, err := http.Get(ts.URL + "/tasks/" + taskTest.ID)
-		if err != nil {
-			t.Error(err)
-		}
-
-		var resTask model.Task
-		if err := json.NewDecoder(res.Body).Decode(&resTask); err != nil {
-			t.Errorf("Unable to get JSON content %v", err)
-		}
-		res.Body.Close()
-
-		if res.StatusCode != http.StatusOK {
-			t.Errorf("Wrong response code. Got %d instead of %d.", res.StatusCode, http.StatusOK)
-		}
-
-		if resTask != taskTest {
-			t.Errorf("Expected different from %v output %v", resTask, taskTest)
-		}
-	})
-
-}
-
-func BenchmarkTaskControllerGet(b *testing.B) {
-
-	// get mock dao
-	daoMock, _ := dao.GetTaskDAO("", dao.DAOMock)
-	handler := NewTaskController(daoMock)
-
-	// build a request
-	req, err := http.NewRequest("GET", "localhost/tasks", nil)
-	if err != nil {
-		b.Fatal(err)
-	}
-
-	for n := 0; n < b.N; n++ {
-		// build the recorder
-		res := httptest.NewRecorder()
-
-		// execute the query
-		handler.GetAll(res, req)
-	}
 }
 
 func BenchmarkTaskControllerPost(b *testing.B) {
@@ -268,6 +174,12 @@ func BenchmarkTaskControllerPost(b *testing.B) {
 		// execute the query
 		controller.Create(res, req)
 	}
+}
+
+func BenchmarkTaskControllerGet(b *testing.B) {
+
+	// TODO: implement benchmark of controller.GetAll (using mocked DAO and httptest Recorder)
+	// TODO: keep in mind we want to benchmark controller.GetAll method only, not the controller initialisation.
 }
 
 // This benchmark illustrates how memory allocations are visible with PPROF
