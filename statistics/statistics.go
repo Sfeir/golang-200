@@ -24,7 +24,7 @@ func NewStatistics(loggingPeriod time.Duration) *Statistics {
 	return nil
 }
 
-// PlusOne is used to add one to the counter
+// PlusOne is used to send a statistics hit increment
 func (sw *Statistics) PlusOne() {
 	// TODO push a hit in the statistics channel
 }
