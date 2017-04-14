@@ -30,7 +30,7 @@ func NewStatistics(loggingPeriod time.Duration) *Statistics {
 	return &sw
 }
 
-// PlusOne is used to add one to the counter
+// PlusOne is used to send a statistics hit increment
 func (sw *Statistics) PlusOne() {
 	sw.statistics <- uint8(1)
 }
