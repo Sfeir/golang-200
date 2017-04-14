@@ -23,11 +23,14 @@ type TaskDAOMock struct {
 
 // NewTaskDAOMock creates a new TaskDAO with a mocked implementation
 func NewTaskDAOMock() TaskDAO {
-	// TODO build a new TaskDAOMock initializing the map with make
+	daoMock := &TaskDAOMock{
+		storage: make(map[string]*model.Task),
+	}
 
-	// TODO add the mocked task using Save method
+	// Adds some fake data
+	daoMock.Save(&MockedTask)
 
-	return nil
+	return daoMock
 }
 
 // GetByID returns a task by its ID
@@ -84,10 +87,12 @@ func (s *TaskDAOMock) GetByStatusAndPriority(status, priority int) ([]model.Task
 
 // getBy returns all tasks that meet filtering conditions
 func (s *TaskDAOMock) getBy(filter func(task *model.Task) bool) []model.Task {
-	// result set
 	var tasks []model.Task
-	// TODO iterate over the map storage
-	// TODO call the filter function on each item and add it to the result set if it matches
+	for _, task := range s.storage {
+		if filter(task) {
+			tasks = append(tasks, *task)
+		}
+	}
 	return tasks
 }
 
@@ -113,6 +118,6 @@ func (s *TaskDAOMock) Upsert(task *model.Task) (bool, error) {
 
 // Delete deletes a tasks by its ID
 func (s *TaskDAOMock) Delete(ID string) error {
-	// TODO delete the task with the given ID
+	delete(s.storage, ID)
 	return nil
 }
