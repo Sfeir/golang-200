@@ -1,4 +1,6 @@
 # Changelog
+## v0.0.2
+- 17/04/14 doc(stat): clarify PlusOne go doc (SFR)
 ## v0.0.1 [17/03/21]
 - 17/03/21 fix(main): fix the statd flag help message (SFR)
 - 17/03/20 fix(web): fix the Fatal log level in server build (SFR)
