@@ -40,7 +40,7 @@ type Task struct {
 	DueDate      time.Time    `json:"dueDate" bson:"dueDate"`
 }
 
-// NewID returns the ID of a Task as a string
+// NewID sets a new ID of the Task as a string
 func (s *Task) NewID() {
 	s.ID = uuid.NewV4().String()
 }
