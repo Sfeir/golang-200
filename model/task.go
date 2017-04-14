@@ -25,4 +25,4 @@ type Task struct {
 }
 
 // TODO add a NewID method to the Task struct to create a new UUID for the task when called
-// NewID returns the ID of a Task as a string
+// NewID sets a new ID of the Task as a string
