@@ -6,7 +6,7 @@ import (
 	"github.com/Sfeir/golang-200/dao"
 	"github.com/Sfeir/golang-200/utils"
 	"github.com/Sfeir/golang-200/web"
-	logger "github.com/Sirupsen/logrus"
+	logger "github.com/sirupsen/logrus"
 	cli "gopkg.in/urfave/cli.v1"
 	"os"
 	"strconv"
@@ -45,7 +45,7 @@ var (
 func main() {
 	// new app
 	app := cli.NewApp()
-	app.Name = "todolist"
+	app.Name = utils.AppName
 	app.Usage = "todolist service launcher"
 
 	timeStmp, err := strconv.Atoi(BuildStmp)
