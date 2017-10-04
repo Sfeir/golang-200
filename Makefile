@@ -1,4 +1,7 @@
 # Makefile for Todolist : Go-200
+
+.DEFAULT_GOAL := all
+
 # -----------------------------------------------------------------
 #
 #        ENV VARIABLE
@@ -11,7 +14,6 @@ GO=$(firstword $(subst :, ,$(GOPATH)))
 PKGS=$(shell go list ./... | grep -v /vendor/)
 DOCKER_IP=$(shell if [ -z "$(DOCKER_MACHINE_NAME)" ]; then echo 'localhost'; else docker-machine ip $(DOCKER_MACHINE_NAME); fi)
 export GO15VENDOREXPERIMENT=1
-
 
 # -----------------------------------------------------------------
 #        Version
@@ -27,64 +29,36 @@ VERSION_FLAG=-ldflags "-X main.Version=$(VERSION) -X main.GitHash=$(BUILDHASH) -
 #        Main targets
 # -----------------------------------------------------------------
 
-all: clean build
+all: clean build ## Clean and build the project
 
-help:
-	@echo
-	@echo "----- BUILD ------------------------------------------------------------------------------"
-	@echo "all                  clean and build the project"
-	@echo "clean                clean the project"
-	@echo "build                build all libraries and binaries"
-	@echo "----- TESTS && LINT ----------------------------------------------------------------------"
-	@echo "test                 test all packages"
-	@echo "format               format all packages"
-	@echo "lint                 lint all packages"
-	@echo "----- SERVERS AND DEPLOYMENTS ------------------------------------------------------------"
-	@echo "start                start process on localhost"
-	@echo "stop                 stop all process on localhost"
-	@echo "dockerBuild          build the docker image"
-	@echo "dockerClean          remove latest image"
-	@echo "dockerUp             start microservice infrastructure on docker"
-	@echo "dockerStop           stop microservice infrastructure on docker"
-	@echo "dockerBuildUp        stop, build and start microservice infrastructure on docker"
-	@echo "dockerWatch          starts a watch of docker ps command"
-	@echo "dockerLogs           show logs of microservice infrastructure on docker"
-	@echo "----- OTHERS -----------------------------------------------------------------------------"
-	@echo "help                 print this message"
-
-clean:
+clean: ## Clean the project
 	@go clean
-	@rm -Rf .tmp
-	@rm -Rf *.log
-	@rm -Rf *.out
-	@rm -Rf *.mem
-	@rm -Rf *.test
-	@rm -Rf build
+	@rm -Rf .tmp .DS_Store *.log *.out *.mem *.test build/
 
-build: format
+build: format ## Build all libraries and binaries
 	@go build -v $(VERSION_FLAG) -o $(GO)/bin/todolist todolist.go
 
-format:
+format: ## Format all packages
 	@go fmt $(PKGS)
 
-teardownTest:
+teardownTest: ## Tear down mongodb for integration tests
 	@$(shell docker kill todolist-mongo-test 2&>/dev/null 1&>/dev/null)
 	@$(shell docker rm todolist-mongo-test 2&>/dev/null 1&>/dev/null)
 
-setupTest: teardownTest
+setupTest: teardownTest ## Start mongodb for integration tests
 	@docker run -d --name todolist-mongo-test -p "27017:27017" mongo:3.3
 
-test: setupTest
+test: setupTest ## Start tests with a mongodb docker image
 	@export MONGODB_SRV=mongodb://$(DOCKER_IP)/tasks; go test -v $(PKGS); make teardownTest
 
-bench: setupTest
+bench: setupTest ## Start benchmark
 	@go test -v -run nothing -bench=. -memprofile=prof.mem github.com/Sfeir/golang-200/web ; make teardownTest
 
-benchTool: bench
+benchTool: bench ## Start benchmark tool
 	@echo "### TIP : type 'top 5' and 'list path_of_the_first_item'"
 	@go tool pprof --alloc_space web.test prof.mem
 
-lint:
+lint: ## Lint all packages
 	@golint dao/...
 	@golint model/...
 	@golint web/...
@@ -92,36 +66,37 @@ lint:
 	@golint ./.
 	@go vet $(PKGS)
 
-start:
+start: ## Start the program
 	@todolist -port 8020 -logl debug -logf text -statd 15s -db mongodb://$(DOCKER_IP)/tasks
 
-stop:
+stop: ## Stop the program
 	@killall todolist
 
 # -----------------------------------------------------------------
 #        Docker targets
 # -----------------------------------------------------------------
 
-dockerBuild:
+dockerBuild: ## Build a docker image of the program
 	docker build -t sfeir/todolist:latest .
 
-dockerClean:
+dockerClean: ## Remove the docker image of the program
 	docker rmi -f sfeir/todolist:latest
 
-dockerUp:
+dockerUp: ## Start the program with its mongodb
 	docker-compose up -d
 
-dockerStop:
-	docker-compose stop
-	docker-compose kill
-	docker-compose rm -f
+dockerDown: ## Stop the program and the mongodb and remove the containers
+	docker-compose down
 
-dockerBuildUp: dockerStop dockerBuild dockerUp
+dockerBuildUp: dockerDown dockerBuild dockerUp ## Stop, build and launch the docker images of the program
 
-dockerWatch:
+dockerWatch: ## Watch the status of the docker container
 	@watch -n1 'docker ps | grep todolist'
 
-dockerLogs:
+dockerLogs: ## Print the logs of the container
 	docker-compose logs -f
+
+help: ## Print this message
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: all test clean teardownTest setupTest
