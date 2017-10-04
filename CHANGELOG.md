@@ -3,6 +3,7 @@
 - 17/10/04 chore(make): clean make file auto generated help (SFR for RLE)
            chore(dep): update package manager to dep, update vendor
            chore(docker): update docker image version, add multistep build
+           refact(main): refact arg parsing, remove redondant arg parsing
 - 17/04/14 doc(stat): clarify PlusOne go doc (SFR)
            doc(model): fix the NewID documentation to match method content
 ## v0.0.1 [17/03/21]

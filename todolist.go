@@ -58,29 +58,34 @@ func main() {
 	// command line flags
 	app.Flags = []cli.Flag{
 		cli.IntFlag{
-			Value: port,
-			Name:  "port",
-			Usage: "Set the listening port of the webserver",
+			Value:       port,
+			Name:        "port, p",
+			Usage:       "Set the listening port of the webserver",
+			Destination: &port,
 		},
 		cli.StringFlag{
-			Value: db,
-			Name:  "db",
-			Usage: "Set the mongo database connection string",
+			Value:       db,
+			Name:        "db, d",
+			Usage:       "Set the mongo database connection string",
+			Destination: &db,
 		},
 		cli.StringFlag{
-			Value: logLevel,
-			Name:  "logl",
-			Usage: "Set the output log level (debug, info, warning, error)",
+			Value:       logLevel,
+			Name:        "logl, l",
+			Usage:       "Set the output log level (debug, info, warning, error)",
+			Destination: &logLevel,
 		},
 		cli.StringFlag{
-			Value: logFormat,
-			Name:  "logf",
-			Usage: "Set the log formatter (logstash or text)",
+			Value:       logFormat,
+			Name:        "logf, f",
+			Usage:       "Set the log formatter (logstash or text)",
+			Destination: &logFormat,
 		},
 		cli.DurationFlag{
-			Value: statisticsDuration,
-			Name:  "statd",
-			Usage: "Set the statistics accumulation duration (ex : 1h, 2h30m, 30s, 300ms)",
+			Value:       statisticsDuration,
+			Name:        "statd, s",
+			Usage:       "Set the statistics accumulation duration (ex : 1h, 2h30m, 30s, 300ms)",
+			Destination: &statisticsDuration,
 		},
 	}
 
@@ -92,13 +97,6 @@ func main() {
 
 		// set timezone as UTC for bson/json time marshalling
 		time.Local = time.UTC
-
-		// parse parameters
-		port = c.Int("port")
-		db = c.String("db")
-		logLevel = c.String("logl")
-		logFormat = c.String("logf")
-		statisticsDuration = c.Duration("statd")
 
 		fmt.Print("* --------------------------------------------------- *\n")
 		fmt.Printf("|   port                    : %d\n", port)
