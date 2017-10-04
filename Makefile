@@ -79,6 +79,9 @@ stop: ## Stop the program
 dockerBuild: ## Build a docker image of the program
 	docker build -t sfeir/todolist:latest .
 
+dockerBuildMulti: ## Build a docker multistep image of the program
+	docker build -f Dockerfile.multi -t sfeir/todolist:latest .
+
 dockerClean: ## Remove the docker image of the program
 	docker rmi -f sfeir/todolist:latest
 
@@ -90,6 +93,8 @@ dockerDown: ## Stop the program and the mongodb and remove the containers
 
 dockerBuildUp: dockerDown dockerBuild dockerUp ## Stop, build and launch the docker images of the program
 
+dockerBuildUpMulti: dockerDown dockerBuildMulti dockerUp ## Stop, build multi step and launch the docker images of the program
+
 dockerWatch: ## Watch the status of the docker container
 	@watch -n1 'docker ps | grep todolist'
 
@@ -97,6 +102,6 @@ dockerLogs: ## Print the logs of the container
 	docker-compose logs -f
 
 help: ## Print this message
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: all test clean teardownTest setupTest
