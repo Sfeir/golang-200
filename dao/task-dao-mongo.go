@@ -2,8 +2,8 @@ package dao
 
 import (
 	"github.com/Sfeir/golang-200/model"
-	logger "github.com/Sirupsen/logrus"
 	"github.com/satori/go.uuid"
+	logger "github.com/sirupsen/logrus"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
