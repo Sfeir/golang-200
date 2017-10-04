@@ -3,7 +3,7 @@ package web
 import (
 	"github.com/Sfeir/golang-200/dao"
 	"github.com/Sfeir/golang-200/model"
-	logger "github.com/Sirupsen/logrus"
+	logger "github.com/sirupsen/logrus"
 	"gopkg.in/mgo.v2"
 	"net/http"
 	"strconv"
