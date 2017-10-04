@@ -11,7 +11,7 @@ Data are persisted in a MongoDB NoSQL database and the application is deployed i
 * [Gorilla Mux the URL router](https://github.com/gorilla/mux)
 * [Urfave negroni Web HTTP middleware](https://github.com/urfave/negroni)
 * [Urfave cli the command line client parser](https://gopkg.in/urfave/cli.v1)
-* [Sirupsen the logger](https://github.com/Sirupsen/logrus)
+* [Sirupsen the logger](https://github.com/sirupsen/logrus)
 * [The database driver](https://gopkg.in/mgo.v2)
 * [Glide the dependency manager](https://github.com/Masterminds/glide)
 * [Golint the source linter](https://github.com/golang/lint)
