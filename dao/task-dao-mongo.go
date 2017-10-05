@@ -61,20 +61,20 @@ func (s *TaskDAOMongo) GetByID(ID string) (*model.Task, error) {
 
 // getAllTasksByQuery returns tasks by query and paging capability
 func (s *TaskDAOMongo) getAllTasksByQuery(query interface{}, start, end int) ([]model.Task, error) {
-	session := s.session.Copy()
-	defer session.Close()
-	c := session.DB("").C(collection)
+	// TODO Copy the current MongoDB session
+	// TODO defer the close of the session
+	// TODO retrieve the collection from the sesison using const
 
-	// check param
-	hasPaging := start > NoPaging && end > NoPaging && end > start
+	// TODO check param start and end are not set to NoPaging and are ordered
+	hasPaging := true
 
 	// perform request
 	var err error
 	tasks := []model.Task{}
 	if hasPaging {
-		err = c.Find(query).Skip(start).Limit(end - start).All(&tasks)
+		// TODO use the Find Method with Skip and Limit (to be calculated) parameters to retrieve all the results
 	} else {
-		err = c.Find(query).All(&tasks)
+		// TODO use only the Find method
 	}
 
 	return tasks, err
