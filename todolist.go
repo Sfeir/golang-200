@@ -61,14 +61,16 @@ func main() {
 		// TODO add an Int flag called "port", for the webserver
 		// TODO add a String flag called "db", for the MongoDB connection string
 		cli.StringFlag{
-			Value: logLevel,
-			Name:  "logl",
-			Usage: "Set the output log level (debug, info, warning, error)",
+			Value:       logLevel,
+			Name:        "logl",
+			Destination: &logLevel,
+			Usage:       "Set the output log level (debug, info, warning, error)",
 		},
 		cli.StringFlag{
-			Value: logFormat,
-			Name:  "logf",
-			Usage: "Set the log formatter (logstash or text)",
+			Value:       logFormat,
+			Name:        "logf",
+			Destination: &logFormat,
+			Usage:       "Set the log formatter (logstash or text)",
 		},
 		// TODO add a Duration flag called "statd" for the statistics duration (ex. 1h, 30s)
 	}
@@ -81,13 +83,6 @@ func main() {
 
 		// set timezone as UTC for bson/json time marshalling
 		time.Local = time.UTC
-
-		// parse parameters
-		// TODO parse the "port" flag as an Int value
-		// TODO parse the "db" flag as a String value
-		logLevel = c.String("logl")
-		logFormat = c.String("logf")
-		// TODO parse the "statd" flag as a Duration
 
 		fmt.Print("* --------------------------------------------------- *\n")
 		fmt.Printf("|   port                    : %d\n", port)
