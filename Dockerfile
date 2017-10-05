@@ -20,4 +20,4 @@ RUN make all && apk del make git && \
 
 # by default, the exposed ports are 8020 (HTTP)
 EXPOSE 8020
-ENTRYPOINT ["/app/todolist"]
+ENTRYPOINT ["/go/bin/todolist"]
