@@ -94,7 +94,7 @@ func (s *TaskDAOMock) GetByStatusAndPriority(status model.TaskStatus, priority m
 func (s *TaskDAOMock) getBy(filter func(task *model.Task) bool) []model.Task {
 	// TODO implement the generic filter
 	// TODO declare a result array
-	// TODO iterate over the sotrage and apply the filter function
+	// TODO iterate over the storage and apply the filter function
 	// TODO return the filtered result
 	return nil
 }

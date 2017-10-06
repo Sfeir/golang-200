@@ -27,6 +27,6 @@ func TestDAOMock(t *testing.T) {
 
 	// TODO get "toSave" task by ID and verify that it is successfully retrieved
 
-	// TODO delete the "toSave" task and verify with a get by ID that it is remove
+	// TODO delete the "toSave" task and verify with a get by ID that it is removed
 
 }
