@@ -42,7 +42,7 @@ func NewTaskDAOMock() TaskDAO {
 func (s *TaskDAOMock) GetByID(ID string) (*model.Task, error) {
 	task, ok := s.storage[ID]
 	if !ok {
-		return nil, errors.New("Task not found with ID " + ID)
+		return nil, errors.New("task not found with ID " + ID)
 	}
 	return task, nil
 }

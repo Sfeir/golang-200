@@ -12,6 +12,10 @@ import (
 // compilation time interface check
 var _ TaskDAO = (*TaskDAOMongo)(nil)
 
+var (
+	ErrInvalidUUID = errors.New("invalid input to UUID")
+)
+
 const (
 	collection = "tasks"
 	index      = "id"
@@ -47,7 +51,7 @@ func (s *TaskDAOMongo) GetByID(ID string) (*model.Task, error) {
 
 	// check ID
 	if _, err := uuid.FromString(ID); err != nil {
-		return nil, errors.New("Invalid input to UUID")
+		return nil, ErrInvalidUUID
 	}
 
 	session := s.session.Copy()
@@ -138,7 +142,7 @@ func (s *TaskDAOMongo) Delete(ID string) error {
 
 	// check ID
 	if _, err := uuid.FromString(ID); err != nil {
-		return errors.New("Invalid input to UUID")
+		return ErrInvalidUUID
 	}
 
 	session := s.session.Copy()
