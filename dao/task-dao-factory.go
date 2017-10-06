@@ -23,7 +23,7 @@ const (
 
 var (
 	// ErrorDAONotFound is used for unknown DAO type
-	ErrorDAONotFound = errors.New("Unknown DAO type")
+	ErrorDAONotFound = errors.New("unknown DAO type")
 )
 
 // GetTaskDAO returns a TaskDAO according to type and params
