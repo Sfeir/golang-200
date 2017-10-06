@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"errors"
 	"github.com/Sfeir/golang-200/model"
 	"github.com/satori/go.uuid"
 	logger "github.com/sirupsen/logrus"
@@ -10,6 +11,10 @@ import (
 
 // compilation time interface check
 var _ TaskDAO = (*TaskDAOMongo)(nil)
+
+var (
+	ErrInvalidUUID = errors.New("invalid input to UUID")
+)
 
 const (
 	collection = "tasks"
@@ -43,7 +48,6 @@ func NewTaskDAOMongo(session *mgo.Session) TaskDAO {
 
 // GetByID returns a task by its ID
 func (s *TaskDAOMongo) GetByID(ID string) (*model.Task, error) {
-
 	// TODO check in one ligne that the ID is a valid UUID using FromString function
 	// TODO fail fast, return an error if its not the case
 
@@ -134,7 +138,6 @@ func (s *TaskDAOMongo) Upsert(task *model.Task) (bool, error) {
 
 // Delete deletes a tasks by its ID
 func (s *TaskDAOMongo) Delete(ID string) error {
-
 	// TODO check in one ligne that the ID is a valid UUID using FromString function
 	// TODO fail fast, return an error if its not the case
 
