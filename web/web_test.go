@@ -189,8 +189,12 @@ func TestTaskControllerGetServer(t *testing.T) {
 			t.Errorf("Wrong response code. Got %d instead of %d.", res.StatusCode, http.StatusOK)
 		}
 
-		if resTask[0] != taskTest {
-			t.Errorf("Expected different from %v output %v", resTask[0], taskTest)
+		if len(resTask) < 1 {
+			t.Errorf("Expected length different from %v output 1", len(resTask))
+		} else {
+			if resTask[0] != taskTest {
+				t.Errorf("Expected different from %v output %v", resTask[0], taskTest)
+			}
 		}
 	})
 
