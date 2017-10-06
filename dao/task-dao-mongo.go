@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"errors"
 	"github.com/Sfeir/golang-200/model"
 	"github.com/satori/go.uuid"
 	logger "github.com/sirupsen/logrus"
@@ -10,6 +11,10 @@ import (
 
 // compilation time interface check
 var _ TaskDAO = (*TaskDAOMongo)(nil)
+
+var (
+	ErrInvalidUUID = errors.New("invalid input to UUID")
+)
 
 const (
 	collection = "tasks"
