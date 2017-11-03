@@ -13,6 +13,7 @@ import (
 var _ TaskDAO = (*TaskDAOMongo)(nil)
 
 var (
+	// ErrInvalidUUID is used on invalid UUID number
 	ErrInvalidUUID = errors.New("invalid input to UUID")
 )
 
