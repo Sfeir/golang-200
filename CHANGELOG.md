@@ -1,11 +1,11 @@
 # Changelog
 ## v0.0.2
-=======
 - 17/11/03 fix(test): fix time comparison error in test with go 1.9 (SFR)
+           chore(docker): fix docker image and mongo upgrade to 3.4
 - 17/10/05 fix(test): enhance web test errors on full server test (SFR)
            refact(model): refact model constructor
            fix(dao): fix error name
-	   refact(main): update asciiart
+	         refact(main): update asciiart
 - 17/10/04 chore(make): clean make file auto generated help (SFR for RLE)
            chore(dep): update package manager to dep, update vendor
            chore(docker): update docker image version, add multistep build
