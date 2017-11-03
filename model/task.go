@@ -13,6 +13,7 @@ const ()
 const ()
 
 // TODO add the Status and Priority enums, the Creation and Due Dates and the JSON ans BSON annotations
+
 // Task is the structure to define a task to be done
 type Task struct {
 	ID          string
@@ -26,3 +27,5 @@ type Task struct {
 
 // TODO add a NewTask method to create a new UUID for the task when called
 // NewTask builds a new task with a new ID of the Task as a string
+
+// TODO add an Equal method for Task comparison, be careful with time.Time comparison
