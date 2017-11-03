@@ -26,3 +26,5 @@ type Task struct {
 
 // TODO add a NewTask method to create a new UUID for the task when called
 // NewTask builds a new task with a new ID of the Task as a string
+
+// TODO add an Equal method for Task comparison, be careful with time.Time comparison
