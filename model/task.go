@@ -49,3 +49,14 @@ func NewTask() *Task {
 		Priority:     PriorityMedium,
 	}
 }
+
+// Equal compares a Task to another and returns true if they are equal false otherwise
+func (t Task) Equal(task Task) bool {
+	return t.ID == task.ID &&
+		t.Title == task.Title &&
+		t.Description == task.Description &&
+		t.Status == task.Status &&
+		t.Priority == task.Priority &&
+		t.CreationDate.Equal(task.CreationDate) &&
+		t.DueDate.Equal(task.DueDate)
+}
