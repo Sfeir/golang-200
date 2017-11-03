@@ -12,11 +12,6 @@ import (
 	"time"
 )
 
-func init() {
-	// set timezone as UTC for bson/json time marshalling
-	time.Local = time.UTC
-}
-
 // This test is composed by several subtests and uses httptest.ResponseRecorder type to record http response.
 // These are NOT end-to-end tests as we are directly calling the controller methods we want to test.
 func TestTaskControllerGet(t *testing.T) {
@@ -48,7 +43,11 @@ func TestTaskControllerGet(t *testing.T) {
 			t.Errorf("Wrong response code. Got %d instead of %d.", res.Code, http.StatusOK)
 		}
 
-		if dao.MockedTask != taskOut[0] {
+		if len(taskOut) < 1 {
+			t.Fatal("Wrong result size < 1")
+		}
+
+		if !dao.MockedTask.Equal(taskOut[0]) {
 			t.Errorf("Expected different from %v output %v", dao.MockedTask, taskOut[0])
 		}
 	})
@@ -78,7 +77,7 @@ func TestTaskControllerGet(t *testing.T) {
 			t.Errorf("Wrong response code. Got %d instead of %d.", res.Code, http.StatusOK)
 		}
 
-		if dao.MockedTask != taskOut {
+		if !dao.MockedTask.Equal(taskOut) {
 			t.Errorf("Expected different from %v output %v", dao.MockedTask, taskOut)
 		}
 	})
@@ -116,7 +115,7 @@ func TestTaskControllerGet(t *testing.T) {
 		}
 
 		task.ID = taskOut.ID
-		if task != taskOut {
+		if !task.Equal(taskOut) {
 			t.Errorf("Expected different from %v output %v", task, taskOut)
 		}
 	})
@@ -167,7 +166,7 @@ func TestTaskControllerGetServer(t *testing.T) {
 		}
 
 		task.ID = taskTest.ID
-		if task != taskTest {
+		if !task.Equal(taskTest) {
 			t.Errorf("Expected different from %v output %v", task, taskTest)
 		}
 	})
@@ -190,11 +189,11 @@ func TestTaskControllerGetServer(t *testing.T) {
 		}
 
 		if len(resTask) < 1 {
-			t.Errorf("Expected length different from %v output 1", len(resTask))
-		} else {
-			if resTask[0] != taskTest {
-				t.Errorf("Expected different from %v output %v", resTask[0], taskTest)
-			}
+			t.Fatal("Wrong result size < 1")
+		}
+
+		if !resTask[0].Equal(taskTest) {
+			t.Errorf("Expected different from %v output %v", resTask[0], taskTest)
 		}
 	})
 
@@ -215,7 +214,7 @@ func TestTaskControllerGetServer(t *testing.T) {
 			t.Errorf("Wrong response code. Got %d instead of %d.", res.StatusCode, http.StatusOK)
 		}
 
-		if resTask != taskTest {
+		if !resTask.Equal(taskTest) {
 			t.Errorf("Expected different from %v output %v", resTask, taskTest)
 		}
 	})
@@ -229,7 +228,7 @@ func BenchmarkTaskControllerGet(b *testing.B) {
 	handler := NewTaskController(daoMock)
 
 	// build a request
-	req, err := http.NewRequest("GET", "localhost/tasks", nil)
+	req, err := http.NewRequest(http.MethodGet, "localhost/tasks", nil)
 	if err != nil {
 		b.Fatal(err)
 	}

@@ -161,7 +161,7 @@ func (sh *TaskController) Update(w http.ResponseWriter, r *http.Request) {
 	err := GetJSONContent(task, r)
 
 	if err != nil {
-		logger.WithField("error", err).Warn("unable to decode task to create")
+		logger.WithField("error", err).Warn("unable to decode task to update")
 		SendJSONError(w, "Error while decoding task to create", http.StatusBadRequest)
 		return
 	}
