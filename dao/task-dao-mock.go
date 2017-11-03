@@ -9,6 +9,7 @@ import (
 var _ TaskDAO = (*TaskDAOMock)(nil)
 
 // TODO add the missing attributes (ID, Priority, dates) to have a complete Task
+
 // MockedTask is the task returned by this mocked interface
 var MockedTask = model.Task{
 	Title:       "Learn Go",

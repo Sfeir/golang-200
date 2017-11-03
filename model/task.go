@@ -13,6 +13,7 @@ const ()
 const ()
 
 // TODO add the Status and Priority enums, the Creation and Due Dates and the JSON ans BSON annotations
+
 // Task is the structure to define a task to be done
 type Task struct {
 	ID          string
