@@ -46,7 +46,7 @@ teardownTest: ## Tear down mongodb for integration tests
 	@$(shell docker rm todolist-mongo-test 2&>/dev/null 1&>/dev/null)
 
 setupTest: teardownTest ## Start mongodb for integration tests
-	@docker run -d --name todolist-mongo-test -p "27017:27017" mongo:3.3
+	@docker run -d --name todolist-mongo-test -p "27017:27017" mongo:3.4
 
 test: setupTest ## Start tests with a mongodb docker image
 	@export MONGODB_SRV=mongodb://$(DOCKER_IP)/tasks; go test -v $(PKGS); make teardownTest
