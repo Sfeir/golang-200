@@ -7,12 +7,12 @@ todolist:
    - mongo
  ports:
   - "8020:8020"
- command: /go/bin/todolist -port 8020 -logl debug -logf text -statd 15s -db mongodb://mongo/tasks
+ command: -port 8020 -logl debug -logf text -statd 15s -db mongodb://mongo/tasks
 
 # bdd mockup
 mongo:
  container_name: todolist-mongo
- image: mongo:3.3
+ image: mongo:3.4
  restart: always
  ports:
   - "27017:27017"
