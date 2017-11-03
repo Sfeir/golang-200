@@ -1,6 +1,7 @@
 # Changelog
 ## v0.0.2
 - 17/11/03 fix(test): fix time comparison error in test with go 1.9 (SFR)
+           chore(docker): fix docker image and mongo upgrade to 3.4
 - 17/10/05 fix(test): enhance web test errors on full server test (SFR)
            refact(model): refact model constructor
            fix(dao): fix error name
