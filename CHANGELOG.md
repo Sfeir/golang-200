@@ -1,4 +1,7 @@
 # Changelog
+## v0.0.3
+- 18/02/19 chore(build): update Docker build images to golang v1.10
+           feat(web): add CORS middleware
 ## v0.0.2
 - 17/11/03 fix(test): fix time comparison error in test with go 1.9 (SFR)
            chore(docker): fix docker image and mongo upgrade to 3.4
