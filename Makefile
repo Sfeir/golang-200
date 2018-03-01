@@ -8,8 +8,19 @@
 #
 # -----------------------------------------------------------------
 
+# check os for path params
+ifeq ($(OS),Windows_NT)
+	PATHSEP=;
+	FOLDERSEP=\\
+	EXTENSION=.exe
+else
+	PATHSEP=:
+	FOLDERSEP=/
+	EXTENSION=""
+endif
+
 # go env vars
-GO=$(firstword $(subst :, ,$(GOPATH)))
+GO=$(firstword $(subst $(PATHSEP), ,$(GOPATH)))
 # list of pkgs for the project without vendor
 PKGS=$(shell go list ./... | grep -v /vendor/)
 DOCKER_IP=$(shell if [ -z "$(DOCKER_MACHINE_NAME)" ]; then echo 'localhost'; else docker-machine ip $(DOCKER_MACHINE_NAME); fi)
@@ -36,20 +47,19 @@ clean: ## Clean the project
 	@rm -Rf .tmp .DS_Store *.log *.out *.mem *.test build/
 
 build: format ## Build all libraries and binaries
-	@go build -v $(VERSION_FLAG) -o $(GO)/bin/todolist todolist.go
+	@go build -v $(VERSION_FLAG) -o "$(GO)$(FOLDERSEP)bin$(FOLDERSEP)todolist$(EXTENSION)" todolist.go
 
 format: ## Format all packages
 	@go fmt $(PKGS)
 
-teardownTest: ## Tear down mongodb for integration tests
-	@$(shell docker kill todolist-mongo-test 2&>/dev/null 1&>/dev/null)
-	@$(shell docker rm todolist-mongo-test 2&>/dev/null 1&>/dev/null)
+teardownTest: ## Tear down databases for integration tests
+	@docker-compose -f docker/databases.yml down
 
-setupTest: teardownTest ## Start mongodb for integration tests
-	@docker run -d --name todolist-mongo-test -p "27017:27017" mongo:3.4
+setupTest: teardownTest ## Start databases for integration tests
+	@docker-compose -f docker/databases.yml up -d
 
-test: setupTest ## Start tests with a mongodb docker image
-	@export MONGODB_SRV=mongodb://$(DOCKER_IP)/tasks; go test -v $(PKGS); make teardownTest
+test: setupTest ## Start tests with a databases docker image
+	@export DB_HOST=$(DOCKER_IP); sleep 2; go test -v $(PKGS); make teardownTest
 
 bench: setupTest ## Start benchmark
 	@go test -v -run nothing -bench=. -memprofile=prof.mem github.com/Sfeir/golang-200/web ; make teardownTest
@@ -66,30 +76,24 @@ lint: ## Lint all packages
 	@golint ./.
 	@go vet $(PKGS)
 
-start: ## Start the program
-	@todolist -port 8020 -logl debug -logf text -statd 15s -db mongodb://$(DOCKER_IP)/tasks
-
-stop: ## Stop the program
-	@killall todolist
-
 # -----------------------------------------------------------------
 #        Docker targets
 # -----------------------------------------------------------------
 
 dockerBuild: ## Build a docker image of the program
-	docker build -t sfeir/todolist:latest .
+	docker build -t -f docker/DockerFile sfeir/todolist:latest .
 
 dockerBuildMulti: ## Build a docker multistep image of the program
-	docker build -f Dockerfile.multi -t sfeir/todolist:latest .
+	docker build -f docker/Dockerfile.multi -t sfeir/todolist:latest .
 
 dockerClean: ## Remove the docker image of the program
 	docker rmi -f sfeir/todolist:latest
 
-dockerUp: ## Start the program with its mongodb
-	docker-compose up -d
+dockerUp: ## Start the program instances with their databases
+	docker-compose -f docker/docker-compose.yml up -d
 
-dockerDown: ## Stop the program and the mongodb and remove the containers
-	docker-compose down
+dockerDown: ## Stop the program instances, their databases and remove the containers
+	docker-compose -f docker/docker-compose.yml down
 
 dockerBuildUp: dockerDown dockerBuild dockerUp ## Stop, build and launch the docker images of the program
 

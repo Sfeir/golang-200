@@ -53,11 +53,16 @@ func NotFoundHandler() http.HandlerFunc {
 	}
 }
 
-// ParamAsString returns an URL parameter /{name} as a string
-func ParamAsString(name string, r *http.Request) string {
+// URLParamAsString returns an URL parameter /{name} as a string
+func URLParamAsString(name string, r *http.Request) string {
 	vars := mux.Vars(r)
 	value := vars[name]
 	return value
+}
+
+// QueryParamAsString Param Return a url param as an int
+func QueryParamAsString(name string, r *http.Request) string {
+	return r.URL.Query().Get(name)
 }
 
 // GetJSONContent returns the JSON content of a request

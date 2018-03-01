@@ -4,7 +4,6 @@ import (
 	"github.com/Sfeir/golang-200/dao"
 	"github.com/Sfeir/golang-200/model"
 	logger "github.com/sirupsen/logrus"
-	"gopkg.in/mgo.v2"
 	"net/http"
 	"strconv"
 )
@@ -73,8 +72,8 @@ func NewTaskController(taskDAO dao.TaskDAO) *TaskController {
 // GetAll retrieve all entities with optional paging of items (start / end are item counts 50 to 100 for example)
 func (sh *TaskController) GetAll(w http.ResponseWriter, r *http.Request) {
 
-	startStr := ParamAsString("start", r)
-	endStr := ParamAsString("end", r)
+	startStr := QueryParamAsString("start", r)
+	endStr := QueryParamAsString("end", r)
 
 	start := dao.NoPaging
 	end := dao.NoPaging
@@ -93,6 +92,13 @@ func (sh *TaskController) GetAll(w http.ResponseWriter, r *http.Request) {
 	// find all tasks
 	tasks, err := sh.taskDao.GetAll(start, end)
 	if err != nil {
+		if err == dao.ErrNotFound {
+			logger.WithField("error", err).
+				WithField("start", start).
+				WithField("end", end).Warn("unable to retrieve all tasks")
+			SendJSONNotFound(w)
+			return
+		}
 		logger.WithField("error", err).Warn("unable to retrieve tasks")
 		SendJSONError(w, "Error while retrieving tasks", http.StatusInternalServerError)
 		return
@@ -105,12 +111,12 @@ func (sh *TaskController) GetAll(w http.ResponseWriter, r *http.Request) {
 // Get retrieve an entity by id
 func (sh *TaskController) Get(w http.ResponseWriter, r *http.Request) {
 	// get the task's ID from the URL
-	taskID := ParamAsString("id", r)
+	taskID := URLParamAsString("id", r)
 
 	// find the task
 	task, err := sh.taskDao.GetByID(taskID)
 	if err != nil {
-		if err == mgo.ErrNotFound {
+		if err == dao.ErrNotFound {
 			logger.WithField("error", err).WithField("task ID", taskID).Warn("unable to retrieve task by ID")
 			SendJSONNotFound(w)
 			return
@@ -153,7 +159,7 @@ func (sh *TaskController) Create(w http.ResponseWriter, r *http.Request) {
 // Update update an entity by id
 func (sh *TaskController) Update(w http.ResponseWriter, r *http.Request) {
 	// get the task ID from the URL
-	taskID := ParamAsString("id", r)
+	taskID := URLParamAsString("id", r)
 
 	// task to be created
 	task := &model.Task{}
@@ -182,7 +188,7 @@ func (sh *TaskController) Update(w http.ResponseWriter, r *http.Request) {
 // Delete delete an entity by id
 func (sh *TaskController) Delete(w http.ResponseWriter, r *http.Request) {
 	// get the task ID from the URL
-	taskID := ParamAsString("id", r)
+	taskID := URLParamAsString("id", r)
 
 	// find task
 	err := sh.taskDao.Delete(taskID)

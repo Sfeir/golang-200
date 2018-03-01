@@ -7,7 +7,7 @@ import (
 	"github.com/Sfeir/golang-200/utils"
 	"github.com/Sfeir/golang-200/web"
 	logger "github.com/sirupsen/logrus"
-	cli "gopkg.in/urfave/cli.v1"
+	"gopkg.in/urfave/cli.v1"
 	"os"
 	"strconv"
 	"time"
@@ -23,7 +23,9 @@ var (
 
 	port               = 8020
 	logLevel           = "warning"
-	db                 = "mongodb://mongo/todos"
+	db                 = ""
+	dbType             = dao.DAOMockStr
+	migrationPath      = "migration"
 	logFormat          = utils.TextFormatter
 	statisticsDuration = 20 * time.Second
 
@@ -61,9 +63,22 @@ func main() {
 		cli.StringFlag{
 			Value:       db,
 			Name:        "db, d",
-			Usage:       "Set the mongo database connection string",
+			Usage:       "Set the database connection string (mongodb or postgresql)",
 			Destination: &db,
 		},
+		cli.StringFlag{
+			Value:       dbType,
+			Name:        "dbt, dt",
+			Usage:       "Set the database type to use for the service (mongodb, postgresql or mock",
+			Destination: &dbType,
+		},
+		cli.StringFlag{
+			Value:       migrationPath,
+			Name:        "mp, m",
+			Usage:       "Set the database migration folder path",
+			Destination: &migrationPath,
+		},
+
 		cli.StringFlag{
 			Value:       logLevel,
 			Name:        "logl, l",
@@ -96,6 +111,8 @@ func main() {
 		fmt.Print("* --------------------------------------------------- *\n")
 		fmt.Printf("|   port                    : %d\n", port)
 		fmt.Printf("|   db                      : %s\n", db)
+		fmt.Printf("|   dbt                     : %s\n", dbType)
+		fmt.Printf("|   mp                      : %s\n", migrationPath)
 		fmt.Printf("|   logger level            : %s\n", logLevel)
 		fmt.Printf("|   logger format           : %s\n", logFormat)
 		fmt.Printf("|   statistic duration(s)   : %0.f\n", statisticsDuration.Seconds())
@@ -107,8 +124,14 @@ func main() {
 			logger.Warn("error setting log level, using debug as default")
 		}
 
+		// parse the database type
+		dbt, err := dao.ParseDBType(dbType)
+		if err != nil {
+			return err
+		}
+
 		// build the web server
-		webServer, err := web.BuildWebServer(db, dao.DAOMongo, statisticsDuration)
+		webServer, err := web.BuildWebServer(db, migrationPath, dbt, statisticsDuration)
 
 		if err != nil {
 			return err

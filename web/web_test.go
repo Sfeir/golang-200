@@ -17,7 +17,7 @@ import (
 func TestTaskControllerGet(t *testing.T) {
 
 	newControllerTest := func() *TaskController {
-		daoMock, _ := dao.GetTaskDAO("", dao.DAOMock)
+		daoMock, _ := dao.GetTaskDAO("", "", dao.DAOMock)
 		return NewTaskController(daoMock)
 	}
 
@@ -129,7 +129,7 @@ func TestTaskControllerGetServer(t *testing.T) {
 	// get config
 	config := os.Getenv("MONGODB_SRV")
 
-	srv, err := BuildWebServer(config, dao.DAOMongo, 250*time.Millisecond)
+	srv, err := BuildWebServer(config, "", dao.DAOMongo, 250*time.Millisecond)
 	if err != nil {
 		t.Error(err)
 	}
@@ -224,7 +224,7 @@ func TestTaskControllerGetServer(t *testing.T) {
 func BenchmarkTaskControllerGet(b *testing.B) {
 
 	// get mock dao
-	daoMock, _ := dao.GetTaskDAO("", dao.DAOMock)
+	daoMock, _ := dao.GetTaskDAO("", "", dao.DAOMock)
 	handler := NewTaskController(daoMock)
 
 	// build a request
@@ -245,7 +245,7 @@ func BenchmarkTaskControllerGet(b *testing.B) {
 func BenchmarkTaskControllerPost(b *testing.B) {
 
 	// get mock dao
-	daoMock, _ := dao.GetTaskDAO("", dao.DAOMock)
+	daoMock, _ := dao.GetTaskDAO("", "", dao.DAOMock)
 	controller := NewTaskController(daoMock)
 
 	// build a request

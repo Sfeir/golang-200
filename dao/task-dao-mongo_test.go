@@ -1,6 +1,7 @@
 package dao_test
 
 import (
+	"fmt"
 	"github.com/Sfeir/golang-200/dao"
 	"github.com/Sfeir/golang-200/model"
 	"github.com/satori/go.uuid"
@@ -10,10 +11,11 @@ import (
 )
 
 func TestDAOMongo(t *testing.T) {
-	// get config
-	config := os.Getenv("MONGODB_SRV")
+	// get host IP
+	dbHost := os.Getenv("DB_HOST")
+	db := fmt.Sprintf("mongodb://%s/tasks", dbHost)
 
-	daoMongo, err := dao.GetTaskDAO(config, dao.DAOMongo)
+	daoMongo, err := dao.GetTaskDAO(db, "", dao.DAOMongo)
 	if err != nil {
 		t.Error(err)
 	}

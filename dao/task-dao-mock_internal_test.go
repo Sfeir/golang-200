@@ -25,9 +25,13 @@ func TestDAOMockInternal(t *testing.T) {
 
 	daoMock.Save(&toSave)
 
-	tasks := daoMock.getBy(func(task *model.Task) bool {
+	tasks, err := daoMock.getBy(func(task *model.Task) bool {
 		return task.Status == model.StatusTodo
 	})
+
+	if err != nil {
+		t.Errorf("Error retrieving tasks %v", err)
+	}
 
 	if len(tasks) != 1 {
 		t.Errorf("Expected 1 task, got %d", len(tasks))

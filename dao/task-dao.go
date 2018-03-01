@@ -1,12 +1,21 @@
 package dao
 
 import (
+	"errors"
 	"github.com/Sfeir/golang-200/model"
 )
 
 const (
 	// NoPaging used with skip, limit parameters
 	NoPaging = -1
+)
+
+var (
+	// ErrInvalidUUID is used on invalid UUID number
+	ErrInvalidUUID = errors.New("invalid input to UUID")
+
+	// ErrNotFound is used when no result are found for the given parameters
+	ErrNotFound = errors.New("no result found")
 )
 
 // TaskDAO is the DAO interface to work with tasks
