@@ -13,14 +13,22 @@ ifeq ($(OS),Windows_NT)
 	PATHSEP=;
 	FOLDERSEP=\\
 	EXTENSION=.exe
+	# case gopath is empty used the default one
+	ifeq ($(GOPATH),)
+		GOPATH=$(USERPROFILE)\go
+  endif
 else
 	PATHSEP=:
 	FOLDERSEP=/
 	EXTENSION=""
+	# case gopath is empty used the default one
+	ifeq ($(GOPATH),)
+		GOPATH=$(HOME)/go
+	endif
 endif
 
-# go env vars
 GO=$(firstword $(subst $(PATHSEP), ,$(GOPATH)))
+
 # list of pkgs for the project without vendor
 PKGS=$(shell go list ./... | grep -v /vendor/)
 DOCKER_IP=$(shell if [ -z "$(DOCKER_MACHINE_NAME)" ]; then echo 'localhost'; else docker-machine ip $(DOCKER_MACHINE_NAME); fi)
