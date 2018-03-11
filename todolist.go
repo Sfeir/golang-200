@@ -78,7 +78,6 @@ func main() {
 			Usage:       "Set the database migration folder path",
 			Destination: &migrationPath,
 		},
-
 		cli.StringFlag{
 			Value:       logLevel,
 			Name:        "logl, l",
