@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"errors"
 	"github.com/Sfeir/golang-200/model"
 	"github.com/satori/go.uuid"
 	logger "github.com/sirupsen/logrus"
@@ -11,11 +10,6 @@ import (
 
 // compilation time interface check
 var _ TaskDAO = (*TaskDAOMongo)(nil)
-
-var (
-	// ErrInvalidUUID is used on invalid UUID number
-	ErrInvalidUUID = errors.New("invalid input to UUID")
-)
 
 const (
 	collection = "tasks"
@@ -61,6 +55,11 @@ func (s *TaskDAOMongo) GetByID(ID string) (*model.Task, error) {
 	task := model.Task{}
 	c := session.DB("").C(collection)
 	err := c.Find(bson.M{"id": ID}).One(&task)
+
+	// if no result found wrap with dao known error
+	if err != nil && err == mgo.ErrNotFound {
+		return nil, ErrNotFound
+	}
 	return &task, err
 }
 
@@ -71,15 +70,20 @@ func (s *TaskDAOMongo) getAllTasksByQuery(query interface{}, start, end int) ([]
 	c := session.DB("").C(collection)
 
 	// check param
-	hasPaging := start > NoPaging && end > NoPaging && end > start
+	hasPaging := start > NoPaging && end > NoPaging && end >= start
 
 	// perform request
 	var err error
-	tasks := []model.Task{}
+	var tasks []model.Task
 	if hasPaging {
-		err = c.Find(query).Skip(start).Limit(end - start).All(&tasks)
+		err = c.Find(query).Skip(start).Limit(end - start + 1).All(&tasks)
 	} else {
 		err = c.Find(query).All(&tasks)
+	}
+
+	// if no result found wrap with dao known error
+	if err != nil && err == mgo.ErrNotFound {
+		return nil, ErrNotFound
 	}
 
 	return tasks, err

@@ -23,6 +23,7 @@ QUERY="false"
 UPDATE="false"
 DELETE="false"
 VERBOSE=""
+PORT="8020"
 
 # check if running on osx or linux
 IP=127.0.0.1
@@ -46,6 +47,8 @@ usage() {
   echo "	[ -query : queries all entities      ]"
   echo "	[ -update : updates the first entity ]"
   echo "	[ -delete : deletes the first entity ]"
+  echo "	[ -port : service port (default 8020)]"
+  echo "	[ -v : verbose                       ]"
   exit 1
 }
 
@@ -57,6 +60,7 @@ param() {
       		    -query) QUERY="true";;
       		    -update) UPDATE="true";;
       		    -delete) DELETE="true";;
+      		    -port) PORT=$2; shift;;
               -h) usage;;
       		    -v) VERBOSE="-v";;
           esac
@@ -67,34 +71,34 @@ param() {
 # create
 create() {
   vecho "Create task from file..."
-  curl -s -X POST -H "Content-Type:application/json" -d @todomedium.json ${IP}:8020/tasks | jq
+  curl -s -X POST -H "Content-Type:application/json" -d @todomedium.json ${IP}:${PORT}/tasks | jq
 }
 
 # query
 query() {
   vecho "Query all tasks..."
-  curl -s ${IP}:8020/tasks | jq
+  curl -s ${IP}:${PORT}/tasks | jq
 
   vecho "Retrieve first task by ID..."
-  ID=$(curl -s ${IP}:8020/tasks | jq '.[0]' | jq -r '.id')
+  ID=$(curl -s ${IP}:${PORT}/tasks | jq '.[0]' | jq -r '.id')
 
   vecho "Query one task by found ID ${ID}"
-  curl -s ${IP}:8020/tasks/${ID} | jq
+  curl -s ${IP}:${PORT}/tasks/${ID} | jq
 }
 
 # update
 update() {
   vecho "Update task ${ID} from file..."
-  curl -s -X PUT -H "Content-Type:application/json" -d @todohigh.json ${IP}:8020/tasks/${ID} | jq
+  curl -s -X PUT -H "Content-Type:application/json" -d @todohigh.json ${IP}:${PORT}/tasks/${ID} | jq
 
   vecho "Query one task by found ID ${ID} after update"
-  curl -s ${IP}:8020/tasks/${ID} | jq
+  curl -s ${IP}:${PORT}/tasks/${ID} | jq
 }
 
 # delete
 delete() {
   vecho "Deleting task by ID ${ID}"
-  curl -X DELETE -H "Content-Type:application/json" ${IP}:8020/tasks/${ID}
+  curl -X DELETE -H "Content-Type:application/json" ${IP}:${PORT}/tasks/${ID}
 }
 
 ############################
