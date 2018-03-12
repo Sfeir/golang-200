@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"errors"
 	"github.com/Sfeir/golang-200/model"
 	"github.com/satori/go.uuid"
 	"time"
@@ -42,7 +41,7 @@ func NewTaskDAOMock() TaskDAO {
 func (s *TaskDAOMock) GetByID(ID string) (*model.Task, error) {
 	task, ok := s.storage[ID]
 	if !ok {
-		return nil, errors.New("task not found with ID " + ID)
+		return nil, ErrNotFound
 	}
 	return task, nil
 }
@@ -53,50 +52,54 @@ func (s *TaskDAOMock) GetAll(start, end int) ([]model.Task, error) {
 		start = 0
 	}
 	if end == NoPaging {
-		end = len(s.storage)
+		end = len(s.storage) - 1
 	}
 	if start > end || end > len(s.storage) {
 		return []model.Task{}, nil
 	}
 
-	tasks := s.getBy(func(task *model.Task) bool {
+	tasks, err := s.getBy(func(task *model.Task) bool {
 		return true
 	})
 
-	return tasks[start:end], nil
+	// check error
+	if err != nil {
+		return nil, err
+	}
+
+	return tasks[start : end+1], nil
 }
 
 // GetByTitle returns all tasks by title
 func (s *TaskDAOMock) GetByTitle(title string) ([]model.Task, error) {
-	tasks := s.getBy(func(task *model.Task) bool {
+	return s.getBy(func(task *model.Task) bool {
 		return task.Title == title
 	})
-	return tasks, nil
 }
 
 // GetByStatus returns all tasks by status
 func (s *TaskDAOMock) GetByStatus(status model.TaskStatus) ([]model.Task, error) {
-	tasks := s.getBy(func(task *model.Task) bool {
+	return s.getBy(func(task *model.Task) bool {
 		return task.Status == status
 	})
-	return tasks, nil
 }
 
 // GetByStatusAndPriority returns all tasks by status and priority
 func (s *TaskDAOMock) GetByStatusAndPriority(status model.TaskStatus, priority model.TaskPriority) ([]model.Task, error) {
-	tasks := s.getBy(func(task *model.Task) bool {
+	return s.getBy(func(task *model.Task) bool {
 		return task.Status == status && task.Priority == priority
 	})
-	return tasks, nil
 }
 
 // getBy returns all tasks that meet filtering conditions
-func (s *TaskDAOMock) getBy(filter func(task *model.Task) bool) []model.Task {
+func (s *TaskDAOMock) getBy(filter func(task *model.Task) bool) ([]model.Task, error) {
 	// TODO implement the generic filter
 	// TODO declare a result array
 	// TODO iterate over the storage and apply the filter function
+	// TODO check content length and return ErrNotFound if empty
 	// TODO return the filtered result
-	return nil
+
+	return nil, nil
 }
 
 // Save saves the task

@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"errors"
 	"github.com/Sfeir/golang-200/model"
 	"github.com/satori/go.uuid"
 	logger "github.com/sirupsen/logrus"
@@ -11,11 +10,6 @@ import (
 
 // compilation time interface check
 var _ TaskDAO = (*TaskDAOMongo)(nil)
-
-var (
-	// ErrInvalidUUID is used on invalid UUID number
-	ErrInvalidUUID = errors.New("invalid input to UUID")
-)
 
 const (
 	collection = "tasks"
@@ -61,6 +55,11 @@ func (s *TaskDAOMongo) GetByID(ID string) (*model.Task, error) {
 	task := model.Task{}
 	c := session.DB("").C(collection)
 	err := c.Find(bson.M{"id": ID}).One(&task)
+
+	// if no result found wrap with dao known error
+	if err != nil && err == mgo.ErrNotFound {
+		return nil, ErrNotFound
+	}
 	return &task, err
 }
 
@@ -70,7 +69,7 @@ func (s *TaskDAOMongo) getAllTasksByQuery(query interface{}, start, end int) ([]
 	// TODO defer the close of the session
 	// TODO retrieve the collection from the session using const
 
-	// TODO check param start and end are not set to NoPaging and are ordered
+	// TODO check param start and end are not set to NoPaging and are ordered or equal
 	hasPaging := true
 
 	// perform request
@@ -78,6 +77,7 @@ func (s *TaskDAOMongo) getAllTasksByQuery(query interface{}, start, end int) ([]
 	tasks := []model.Task{}
 	if hasPaging {
 		// TODO use the Find method with Skip and Limit (to be calculated) parameters to retrieve all the results
+		// TODO TIP : if start == end, limit must be one
 	} else {
 		// TODO use only the Find method
 	}

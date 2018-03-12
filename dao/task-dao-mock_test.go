@@ -7,7 +7,7 @@ import (
 
 func TestDAOMock(t *testing.T) {
 
-	daoMock, err := dao.GetTaskDAO("", dao.DAOMock)
+	daoMock, err := dao.GetTaskDAO("", "", dao.DAOMock)
 	if err != nil {
 		t.Error(err)
 	}

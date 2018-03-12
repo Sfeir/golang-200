@@ -1,37 +1,34 @@
 package dao
 
 import (
-	"errors"
+	"database/sql"
+	// importing postgresql driver for sql connection
+	_ "github.com/lib/pq"
+	"github.com/mattes/migrate"
+	"github.com/mattes/migrate/database/postgres"
+	// importing file source for db migration
+	_ "github.com/mattes/migrate/source/file"
 	"gopkg.in/mgo.v2"
 	"time"
 )
 
-// DBType lists the type of implementation the factory can return
-type DBType int
-
 const (
-	// DAOMongo is used for Mongo implementation of TaskDAO
-	DAOMongo DBType = iota
-	// DAOMock is used for mocked implementation of TaskDAO
-	DAOMock
-
-	// mongo timeout
+	// db timeout
 	timeout = 5 * time.Second
-	// poolSize of mongo connection pool
-	poolSize = 35
-)
 
-var (
-	// ErrorDAONotFound is used for unknown DAO type
-	ErrorDAONotFound = errors.New("unknown DAO type")
+	// poolSize of db connection pool
+	poolSize = 35
+
+	// file url scheme
+	fileScheme = "file://"
 )
 
 // GetTaskDAO returns a TaskDAO according to type and params
-func GetTaskDAO(param string, daoType DBType) (TaskDAO, error) {
+func GetTaskDAO(cnxStr, migrationPath string, daoType DBType) (TaskDAO, error) {
 	switch daoType {
 	case DAOMongo:
 		// mongo connection
-		mgoSession, err := mgo.DialWithTimeout(param, timeout)
+		mgoSession, err := mgo.DialWithTimeout(cnxStr, timeout)
 		if err != nil {
 			return nil, err
 		}
@@ -44,6 +41,49 @@ func GetTaskDAO(param string, daoType DBType) (TaskDAO, error) {
 		// TODO set the connection pool size using the poolSize const
 
 		// TODO return a new DAO Mongo build with the configured session
+		return nil, nil
+	case DAOPostgres:
+		// postgresql connection
+		db, err := sql.Open("postgres", cnxStr)
+
+		// check errors
+		if err != nil {
+			return nil, err
+		}
+
+		// set max connection in pool
+		// TODO set the maximum open connections in the pool using const
+
+		// try to ping host
+		if err = db.Ping(); err != nil {
+			return nil, err
+		}
+
+		// check is db migration is necessary
+		if len(migrationPath) == 0 {
+			// TODO if no migration return the new DAO PostgreSQL with the db connection
+			return nil, nil
+		}
+
+		//  playing database migration
+		driver, err := postgres.WithInstance(db, &postgres.Config{})
+		m, err := migrate.NewWithDatabaseInstance(
+			fileScheme+migrationPath,
+			"postgres", driver)
+
+		if err != nil {
+			return nil, err
+		}
+
+		// upgrade database if necessary
+		err = m.Up()
+		if err != nil {
+			if err != migrate.ErrNoChange {
+				return nil, err
+			}
+		}
+
+		// TODO return the new DAO PostgreSQL with the db connection
 		return nil, nil
 	case DAOMock:
 		// TODO return a new mocked DAO instance

@@ -1,7 +1,13 @@
 # Changelog
+
+## v0.0.4
+- 18/03/10 feat(dao): add postgresql and db migration support for dao
+           fix(make): add support for windows in Makefile
+
 ## v0.0.3
 - 18/02/19 chore(build): update Docker build images to golang v1.10
            feat(web): add CORS middleware
+
 ## v0.0.2
 - 17/11/03 fix(test): fix time comparison error in test with go 1.9 (SFR)
            chore(docker): fix docker image and mongo upgrade to 3.4
@@ -15,6 +21,7 @@
            refact(main): refact arg parsing, remove redondant arg parsing
 - 17/04/14 doc(stat): clarify PlusOne go doc (SFR)
            doc(model): fix the NewID documentation to match method content
+
 ## v0.0.1 [17/03/21]
 - 17/03/21 fix(main): fix the statd flag help message (SFR)
 - 17/03/20 fix(web): fix the Fatal log level in server build (SFR)
