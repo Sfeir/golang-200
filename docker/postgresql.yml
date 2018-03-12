@@ -1,0 +1,15 @@
+# postgresql db
+version: '2'
+services:
+    todolist-postgresql-db:
+        container_name: todolist-postgresql-db
+        image: postgres:9.5
+        restart: always
+        environment:
+            - POSTGRES_USER=todos
+            - POSTGRES_PASSWORD=password
+            - POSTGRES_DB=todos
+        ports:
+            - 5432:5432
+        # volumes:
+        #     - ~/volumes/todolist/postgresql/:/var/lib/postgresql/
