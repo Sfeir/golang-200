@@ -67,6 +67,7 @@ fabric.properties
 # Folders
 _obj
 _test
+tmp
 
 # Architecture specific extensions/prefixes
 *.[568vq]
