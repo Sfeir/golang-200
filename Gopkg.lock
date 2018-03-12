@@ -21,6 +21,27 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/lib/pq"
+  packages = [
+    ".",
+    "oid"
+  ]
+  revision = "88edab0803230a3898347e77b474f8c1820a1f20"
+
+[[projects]]
+  name = "github.com/mattes/migrate"
+  packages = [
+    ".",
+    "database",
+    "database/postgres",
+    "source",
+    "source/file"
+  ]
+  revision = "035c07716cd373d88456ec4d701402df52584cb4"
+  version = "v3.0.1"
+
+[[projects]]
+  branch = "master"
   name = "github.com/meatballhat/negroni-logrus"
   packages = ["."]
   revision = "31067281800f66f57548a7a32d9c6c5f963fef83"
@@ -85,6 +106,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9b88458bf802d4ef39216bdd4f9bc69b1dc4ae20db54f4eca8b300836834d83f"
+  inputs-digest = "ef1686758377334acd63286733aec53c99f3cdc2b48fc92aab866696ea1529a5"
   solver-name = "gps-cdcl"
   solver-version = 1
