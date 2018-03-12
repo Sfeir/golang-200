@@ -10,7 +10,7 @@ import (
 )
 
 // BuildWebServer constructs a new web server with the right DAO and tasks handler
-func BuildWebServer(db string, daoType dao.DBType, statisticsDuration time.Duration) (*negroni.Negroni, error) {
+func BuildWebServer(db, migration string, daoType dao.DBType, statisticsDuration time.Duration) (*negroni.Negroni, error) {
 
 	// TODO fail fast, try to get the DAO of the required type and return (nil,error) if it fails
 	// TODO don't forget to log the error and the parameters
