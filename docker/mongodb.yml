@@ -1,0 +1,9 @@
+# mongodb db
+version: '2'
+services:
+    todolist-mongodb-db:
+        container_name: todolist-mongodb-db
+        image: mongo:3.4
+        restart: always
+        ports:
+            - "27017:27017"
