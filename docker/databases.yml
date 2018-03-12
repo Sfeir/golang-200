@@ -8,6 +8,8 @@ services:
 
     # mongodb database
     todolist-mongodb-db:
+        depends_on:
+            - todolist-postgresql-db
         extends:
             file: mongodb.yml
             service: todolist-mongodb-db

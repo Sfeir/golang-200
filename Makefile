@@ -89,7 +89,7 @@ lint: ## Lint all packages
 # -----------------------------------------------------------------
 
 dockerBuild: ## Build a docker image of the program
-	docker build -t -f docker/DockerFile sfeir/todolist:latest .
+	docker build -f docker/Dockerfile -t sfeir/todolist:latest .
 
 dockerBuildMulti: ## Build a docker multistep image of the program
 	docker build -f docker/Dockerfile.multi -t sfeir/todolist:latest .

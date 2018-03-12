@@ -104,9 +104,6 @@ func main() {
 		// print header
 		fmt.Println(string(header))
 
-		// set timezone as UTC for bson/json time marshalling
-		time.Local = time.UTC
-
 		fmt.Print("* --------------------------------------------------- *\n")
 		fmt.Printf("|   port                    : %d\n", port)
 		fmt.Printf("|   db                      : %s\n", db)

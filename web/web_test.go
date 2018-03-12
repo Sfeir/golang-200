@@ -127,7 +127,7 @@ func TestTaskControllerGet(t *testing.T) {
 func TestTaskControllerGetServer(t *testing.T) {
 
 	// get config
-	config := os.Getenv("MONGODB_SRV")
+	config := os.Getenv("DB_HOST")
 
 	srv, err := BuildWebServer(config, "", dao.DAOMongo, 250*time.Millisecond)
 	if err != nil {

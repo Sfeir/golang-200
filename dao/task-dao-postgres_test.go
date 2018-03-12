@@ -20,8 +20,6 @@ func TestDAOPostgres(t *testing.T) {
 	dbHost := os.Getenv("DB_HOST")
 	db := fmt.Sprintf("postgres://todos:password@%s:5432/todos?sslmode=disable&connect_timeout=5", dbHost)
 
-	t.Log(db)
-
 	daoPostgre, err := dao.GetTaskDAO(db, MIGRATION_PATH, dao.DAOPostgres)
 	if err != nil {
 		t.Error(err)
