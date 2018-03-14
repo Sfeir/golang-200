@@ -11,12 +11,12 @@ import (
 // compilation time interface check
 var _ TaskDAO = (*TaskDAOPostgres)(nil)
 
-// TaskDAOPostgres is the mongo implementation of the TaskDAO
+// TaskDAOPostgres is the postgreSQL implementation of the TaskDAO
 type TaskDAOPostgres struct {
 	db *sql.DB
 }
 
-// NewTaskDAOPostgres creates a new TaskDAO mongo implementation
+// NewTaskDAOPostgres creates a new TaskDAO postgreSQL implementation
 func NewTaskDAOPostgres(db *sql.DB) TaskDAO {
 	return &TaskDAOPostgres{
 		db: db,
