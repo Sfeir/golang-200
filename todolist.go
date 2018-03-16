@@ -69,7 +69,7 @@ func main() {
 		cli.StringFlag{
 			Value:       dbType,
 			Name:        "dbt, dt",
-			Usage:       "Set the database type to use for the service (mongodb, postgresql or mock",
+			Usage:       "Set the database type to use for the service (mongodb, postgresql or mock)",
 			Destination: &dbType,
 		},
 		cli.StringFlag{

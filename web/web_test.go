@@ -3,6 +3,7 @@ package web
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/Sfeir/golang-200/dao"
 	"github.com/Sfeir/golang-200/model"
 	"net/http"
@@ -126,10 +127,11 @@ func TestTaskControllerGet(t *testing.T) {
 // These ARE end-to-end tests as we are making http requests just as any client would do, without calling any method directly.
 func TestTaskControllerGetServer(t *testing.T) {
 
-	// get config
-	config := os.Getenv("DB_HOST")
+	// get host IP
+	dbHost := os.Getenv("DB_HOST")
+	db := fmt.Sprintf("mongodb://%s/tasks", dbHost)
 
-	srv, err := BuildWebServer(config, "", dao.DAOMongo, 250*time.Millisecond)
+	srv, err := BuildWebServer(db, "", dao.DAOMongo, 250*time.Millisecond)
 	if err != nil {
 		t.Error(err)
 	}
