@@ -40,6 +40,11 @@ func GetTaskDAO(cnxStr, migrationPath string, daoType DBType) (TaskDAO, error) {
 		mgoSession.SetMode(mgo.Monotonic, true)
 		// TODO set the connection pool size using the poolSize const
 
+		// try to ping host
+		if err = mgoSession.Ping(); err != nil {
+			return nil, err
+		}
+
 		// TODO return a new DAO Mongo build with the configured session
 		return nil, nil
 	case DAOPostgres:
