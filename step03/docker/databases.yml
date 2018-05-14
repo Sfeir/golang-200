@@ -1,0 +1,15 @@
+version: '2'
+services:
+    # postgresql database
+    todolist-postgresql-db:
+        extends:
+            file: postgresql.yml
+            service: todolist-postgresql-db
+
+    # mongodb database
+    todolist-mongodb-db:
+        depends_on:
+            - todolist-postgresql-db
+        extends:
+            file: mongodb.yml
+            service: todolist-mongodb-db

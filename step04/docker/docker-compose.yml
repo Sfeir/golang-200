@@ -1,0 +1,49 @@
+version: '2'
+
+services:
+    # postgresql todolist service
+    todolist-postgresql-app:
+        container_name: todolist-postgresql-app
+        image: sfeir/todolist:latest
+        restart: always
+        external_links:
+            - todolist-postgresql-db:postgresql
+        ports:
+            - "8021:8020"
+        command: -port 8020
+                 -logl debug
+                 -logf text
+                 -statd 15s
+                 -dbt postgresql
+                 -mp /migrations
+                 -db postgres://todos:password@postgresql:5432/todos?sslmode=disable&connect_timeout=5
+        volumes:
+            - ../etc/migrations:/migrations
+
+    # mongodb todolist service
+    todolist-mongodb-app:
+            container_name: todolist-mongodb-app
+            image: sfeir/todolist:latest
+            restart: always
+            external_links:
+                - todolist-mongodb-db:mongodb
+            ports:
+                - "8020:8020"
+            command: -port 8020
+                     -logl debug
+                     -logf text
+                     -statd 15s
+                     -dbt mongodb
+                     -db mongodb://mongodb/tasks
+
+    # postgresql database
+    todolist-postgresql-db:
+        extends:
+            file: postgresql.yml
+            service: todolist-postgresql-db
+
+    # mongodb database
+    todolist-mongodb-db:
+        extends:
+            file: mongodb.yml
+            service: todolist-mongodb-db

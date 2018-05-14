@@ -1,0 +1,18 @@
+# todolist micro-service
+todolist:
+ container_name: todolist
+ image: sfeir/todolist:latest
+ restart: always
+ links:
+   - mongo
+ ports:
+  - "8020:8020"
+ command: -port 8020 -logl debug -logf text -statd 15s -db mongodb://mongo/tasks
+
+# bdd mockup
+mongo:
+ container_name: todolist-mongo
+ image: mongo:3.4
+ restart: always
+ ports:
+  - "27017:27017"

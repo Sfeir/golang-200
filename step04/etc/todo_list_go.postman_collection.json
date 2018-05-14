@@ -1,0 +1,87 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Todo list go",
+		"_postman_id": "2e2b7313-e02e-e64b-a845-45bf55298806",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create",
+			"request": {
+				"url": "http://localhost:8020/tasks",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Sfeir School Golang-200\",\n  \"description\": \"Create Golang-200 repository, slides and exam\",\n  \"status\": 0,\n  \"priority\": 1,\n  \"creationDate\": \"2016-11-01T09:00:00Z\",\n  \"dueDate\": \"2016-12-16T09:00:00Z\"\n}\n"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get all",
+			"request": {
+				"url": "http://localhost:8020/tasks",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get by ID",
+			"request": {
+				"url": "http://localhost:8020/tasks/67643bee-931d-4edd-bcf8-531c504eaf95",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"request": {
+				"url": "http://localhost:8020/tasks/67643bee-931d-4edd-bcf8-531c504eaf95",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Sfeir School Golang-200\",\n  \"description\": \"Create Golang-200 repository, slides. No exam\",\n  \"status\": 0,\n  \"priority\": 2,\n  \"creationDate\": \"2016-11-01T09:00:00Z\",\n  \"dueDate\": \"2016-03-23T09:00:00Z\"\n}\n"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete",
+			"request": {
+				"url": "http://localhost:8020/tasks/67643bee-931d-4edd-bcf8-531c504eaf95",
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
