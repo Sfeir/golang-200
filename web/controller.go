@@ -177,7 +177,7 @@ func (sh *TaskController) Update(w http.ResponseWriter, r *http.Request) {
 	_, err = sh.taskDao.Upsert(task)
 	if err != nil {
 		logger.WithField("error", err).WithField("task", *task).Warn("unable to create task")
-		SendJSONError(w, "Error while creating task", http.StatusInternalServerError)
+		SendJSONError(w, "Error while updating task", http.StatusInternalServerError)
 		return
 	}
 
